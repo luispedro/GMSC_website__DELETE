@@ -1,5 +1,6 @@
 module Home exposing (..)
 import Html exposing (..)
+import Html.Attributes as HtmlAttr
 import Html.Attributes exposing (..)
 import Browser
 import Dict
@@ -15,16 +16,21 @@ import Center
 
 
 main: Program () () Never
-main =  
+main =
     Browser.document
     { init = \_ -> ((), Cmd.none)
     , update = \_ _ -> ((), Cmd.none)
     , subscriptions = \_ -> Sub.none
     , view = \_ ->
         { title = "GMSC:Home"
-        , body = 
+        , body =
             [ CDN.stylesheet
             , CDN.fontAwesome
+            , Html.node "link"
+                [ HtmlAttr.rel "stylesheet"
+                , HtmlAttr.href "/public/style.css"
+                ]
+                []
             , Grid.containerFluid []
                 [ Grid.simpleRow
                     [ Grid.col []
