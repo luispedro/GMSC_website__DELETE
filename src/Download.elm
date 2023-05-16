@@ -62,22 +62,22 @@ We provide a 100% non-redundant catalog (964,970,496 smORFs) and a 90% amino-aci
   - conserved domains annotation
   - cellular localization prediction
   - metadata
-___
-##### Protein sequence(.fasta)
+
+### Protein sequence(.fasta)
 Fasta file of 100AA / 90AA protein sequences.
 
 **100AA catalog:**&emsp;[GMSC10.100AA.faa.xz](https://gmgc.embl.de/download.cgi)
 
 **90AA catalog:**&emsp;[GMSC10.90AA.faa.xz](https://gmgc.embl.de/download.cgi)
-___
-##### Nucleotide sequence(.fasta)
+
+### Nucleotide sequence(.fasta)
 Fasta file of 100AA / 90AA nucleotide sequences.
 
 **100AA catalog:**&emsp;[GMSC10.100AA.fna.xz](https://gmgc.embl.de/download.cgi)
 
 **90AA catalog:**&emsp;[GMSC10.90AA.fna.xz](https://gmgc.embl.de/download.cgi)
-___
-##### Clusters
+
+### Clusters
 TSV table relating 100AA smORF accession and the hierarchically obtained clusters at 90% amino acid identity (which represent sequences with the same function).
 
 Columns:
@@ -86,8 +86,8 @@ Columns:
 - `90AA smORF accession`
 
 **Protein clustering table:**&emsp;[GMSC10.cluster.tsv.xz](https://gmgc.embl.de/download.cgi)
-___
-##### Taxonomy classification
+
+### Taxonomy classification
 TSV table relating the taxonomy classification of 100AA / 90AA catalog.
 
 Columns:
@@ -98,8 +98,8 @@ Columns:
 **100AA catalog:**&emsp;[GMSC10.100AA.taxonomy.tsv.xz](https://gmgc.embl.de/download.cgi)
 
 **90AA catalog:**&emsp;[GMSC10.90AA.taxonomy.tsv.xz](https://gmgc.embl.de/download.cgi)
-___
-##### Habitat assignment
+
+### Habitat assignment
 TSV table relating the habitat assignment of 100AA / 90AA catalog.
 
 Columns:
@@ -111,8 +111,8 @@ Columns:
 **100AA catalog:**&emsp;[GMSC10.100AA.habitat.tsv.xz](https://gmgc.embl.de/download.cgi)
 
 **90AA catalog:**&emsp;[GMSC10.90AA.habitat.tsv.xz](https://gmgc.embl.de/download.cgi)
-___
-##### Quality assessment
+
+### Quality assessment
 TSV table relating the high-quality sequences of 100AA / 90AA catalog.
 
 Columns:
@@ -122,8 +122,8 @@ Columns:
 **100AA catalog:**&emsp;[GMSC10.100AA.quality.tsv.xz](https://gmgc.embl.de/download.cgi)
 
 **90AA catalog:**&emsp;[GMSC10.90AA.quality.tsv.xz](https://gmgc.embl.de/download.cgi)
-___
-##### Conserved domains annotation
+
+### Conserved domains annotation
 TSV table relating the Conserved domains annotation of 100AA / 90AA catalog.
 
 Columns:
@@ -134,8 +134,8 @@ Columns:
 **100AA catalog:**&emsp;[GMSC10.100AA.cdd.tsv.xz](https://gmgc.embl.de/download.cgi)
 
 **90AA catalog:**&emsp;[GMSC10.90AA.cdd.tsv.xz](https://gmgc.embl.de/download.cgi)
-___
-##### Cellular localization prediction
+
+### Cellular localization prediction
 TSV table relating the transmembrane or secreted sequences of 100AA / 90AA catalog.
 
 Columns:
@@ -145,8 +145,8 @@ Columns:
 **100AA catalog:**&emsp;[GMSC10.100AA.transmemrane-secreted.tsv.xz](https://gmgc.embl.de/download.cgi)
 
 **90AA catalog:**&emsp;[GMSC10.90AA.transmemrane-secreted.tsv.xz](https://gmgc.embl.de/download.cgi)
-___
-##### Metadata
+
+### Metadata
 TSV table relating the metadata of GMSC.
 
 **Metadata:**&emsp;[GMSC10.metadata.tsv.xz](https://gmgc.embl.de/download.cgi)

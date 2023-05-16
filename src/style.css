@@ -52,7 +52,26 @@ span#content
     margin-bottom:0.3em;
 }
 
-
+/*help span*/
+span#help
+{
+	display:block;
+    background-color:#ebf7fc;
+    position:relative;
+    width: 95%;
+    left:35px;
+    padding: 4px;
+    margin-bottom:2em;
+}
+span#help h2,h3,h4,h5{
+    color: #158BB8;
+    text-align:left;
+    padding: 5px;
+    border-bottom: solid 1px #5CB3CC;
+    position:relative;
+    left:35px;
+    width: 95%;
+}
 
 /*header*/
 div#topbar {
