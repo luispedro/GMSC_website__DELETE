@@ -28,7 +28,7 @@ main =
             , CDN.fontAwesome
             , Html.node "link"
                 [ HtmlAttr.rel "stylesheet"
-                , HtmlAttr.href "/public/style.css"
+                , HtmlAttr.href "style.css"
                 ]
                 []
             , Grid.containerFluid []
@@ -66,7 +66,7 @@ The smORFs were clustered at 90% amino acid identity resulting in 2.9 billion 90
   - habitat assignment
   - quality assessment
   - conserved domain annotation
-  - cellular localization prediction.
+  - cellular localization prediction
 """ ]
 
 

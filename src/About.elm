@@ -1,5 +1,6 @@
 module About exposing (..)
 import Html exposing (..)
+import Html.Attributes as HtmlAttr
 import Html.Attributes exposing (..)
 import Browser
 import Dict
@@ -13,6 +14,7 @@ import Bootstrap.Grid.Row as Row
 
 import Center
 
+
 main: Program () () Never
 main =  
     Browser.document
@@ -24,6 +26,11 @@ main =
         , body = 
             [ CDN.stylesheet
             , CDN.fontAwesome
+            , Html.node "link"
+                [ HtmlAttr.rel "stylesheet"
+                , HtmlAttr.href "style.css"
+                ]
+                []
             , Grid.containerFluid []
                 [ Grid.simpleRow
                     [ Grid.col []
