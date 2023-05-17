@@ -12,7 +12,6 @@ import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 
-import Center
 
 -- header
 
