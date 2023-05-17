@@ -24,6 +24,32 @@ p
     left:35px;
 }
 
+/*link*/
+a:link {color:#0678eb;}      
+a:visited {color:#772585;}  
+
+
+
+/*1st list*/
+ul {
+    list-style: disc;
+    background-color:#ebf7fc;
+    width: 95%;
+    position:relative;
+    left:35px;
+}
+/*2nd list*/
+ul ul {
+    list-style: circle;
+    position:relative;
+    width: 95%;
+    left:0px;
+}
+
+img {
+    max-width : 100%
+}
+
 
 /*introduction span*/
 span#introduction
@@ -54,11 +80,10 @@ span#content
 
 
 
-/*help span*/
+/*help span style*/
 span#help
 {
 	display:block;
-    background-color:#ebf7fc;
     position:relative;
     width: 95%;
     left:35px;
@@ -74,15 +99,34 @@ span#help h2,h3{
     left:35px;
     width: 95%;
 }
-span#help h4{
+span#help h5{
     color: #158BB8;
     text-align:left;
     position:relative;
     left:35px;
     width: 95%;
 }
-
-
+/*1st list*/
+span#help ul {
+    list-style: disc;
+    background-color:#ffffff;
+    width: 95%;
+    position:relative;
+    left:35px;
+}
+/*2nd list*/
+span#help ul ul {
+    list-style: circle;
+    position:relative;
+    width: 95%;
+    left:0px;
+}
+span#help img {
+    max-width : 35%;
+    position:relative;
+    width: 95%;
+    left:400px;
+}
 
 /*header*/
 div#topbar {
@@ -115,36 +159,6 @@ div#footerbar a {
     color: #b4c0c3;
     text-align:center;
     padding: 14px 0px;
-}
-
-
-
-/*link*/
-a:link {color:#0678eb;}      
-a:visited {color:#772585;}  
-
-
-
-/*1st list*/
-ul {
-    list-style: disc;
-    background-color:#ebf7fc;
-    width: 95%;
-    position:relative;
-    left:35px;
-}
-/*2nd list*/
-ul ul {
-    list-style: circle;
-    position:relative;
-    width: 95%;
-    left:0px;
-}
-
-
-
-img {
-    max-width : 100%
 }
 
 

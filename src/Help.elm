@@ -76,7 +76,7 @@ GMSC-mapper is provided as a search tool to query sequences. Users can provide a
 
 GMSC-mapper can also be downloaded and run locally, please see details in [Github page](https://github.com/BigDataBiology/GMSC-mapper)
 
-figure
+![GMSC-mapper](assets/help_tool.png)
 
 ## Identifiers
 smORFs in the catalog are identified with the scheme `GMSC10.100AA.XXX_XXX_XXX` or `GMSC10.90AA.XXX_XXX_XXX`. The initial `GMSC10` indicates the version of the catalog (Global Microbial smORFs Catalog 1.0). The `100AA` or `90AA` indicates the amino acid identity of the catalog. The `XXX_XXX_XXX` is a unique numerical identifier (starting at zero). Numbers were assigned in order of increasing number of copies. So that the greater the number, the greater number of copies of that peptide were present in the raw data. 
@@ -88,37 +88,30 @@ smORFs in the catalog are identified with the scheme `GMSC10.100AA.XXX_XXX_XXX` 
 87,920 high-quality microbial genomes were downloaded from the [ProGenomes v2 database](https://progenomes.embl.de/).
 
 ## Construction of GMSC
-A figure overview
-#### Assembly of contigs and prediction of smORFs
-The reads &gt; 60 bps were processed after trimming positions with quality &lt; 25 using [NGLess](https://github.com/ngless-toolkit/ngless). Filtered reads were assembled into contigs using [Megahit](https://github.com/voutcn/megahit).
+![GMSC-mapper](assets/help_pipeline.png)
+##### Assembly of contigs and prediction of smORFs
+- The reads &gt; 60 bps were processed after trimming positions with quality &lt; 25 using [NGLess](https://github.com/ngless-toolkit/ngless). Filtered reads were assembled into contigs using [Megahit](https://github.com/voutcn/megahit).
+- We used a modified version of [Prodigal](https://github.com/hyattpd/Prodigal) to predict ORFs &gt;= 15 bps.  The ORFs that &lt;= 300 bps were considered smORFs.
 
-We used a modified version of [Prodigal](https://github.com/hyattpd/Prodigal) to predict ORFs &gt;= 15 bps.  The ORFs that &lt;= 300 bps were considered smORFs.
-
-#### Cluster generation
+##### Cluster generation
 All predicted smORFs were removed redundancy with 100% amino acid sequence identity. Then they were clustered with 90% amino acid identity and 90% coverage using [Linclust](https://github.com/soedinglab/MMseqs2).
 
-#### Taxonomy & Habitat annotation
-** Taxonomy annotation:**
+##### Taxonomy & Habitat annotation
+- ** Taxonomy annotation:**
+  - The taxonomy of assembled contigs encoding the small proteins was annotated using [MMSeqs2](https://github.com/soedinglab/MMseqs2) against the [GTDB database](https://gtdb.ecogenomic.org/). 
+  - We recorded the taxonomy of smORFs based on the taxonomy of the contigs of metagenomes or genomes of [Progenome v2 database](https://progenomes.embl.de/) from which the smORFs were predicted. Subsequently, we assign taxonomy for 100AA and 90AA smORFs using the lowest common ancestor (LCA), ignoring the un-assigned rank to make it more specific.
+- **Habitat annotation:**
+  - The metadata of samples was manually curated starting from annotations in the [NCBI Biosample database](https://www.ncbi.nlm.nih.gov/biosample/?term=) and corresponding manuscripts. Based on the environment ontology of [EMBL-EBI Ontology Lookup Service](https://www.ebi.ac.uk/ols4) and host identifier in [NCBI taxonomy database](https://www.ncbi.nlm.nih.gov/taxonomy/?term=), we defined 157 specific habitats classification in total and divided them into 8 major categories: mammal gut, anthropogenic, other-human, other-animal, aquatic, human gut, soil/plant, and other. 
+  - We recorded the habitats of smORFs according to the samples they originated from.
 
-The taxonomy of assembled contigs encoding the small proteins was annotated using [MMSeqs2](https://github.com/soedinglab/MMseqs2) against the [GTDB database](https://gtdb.ecogenomic.org/). 
-
-We recorded the taxonomy of smORFs based on the taxonomy of the contigs of metagenomes or genomes of [Progenome v2 database](https://progenomes.embl.de/) from which the smORFs were predicted. Subsequently, we assign taxonomy for 100AA and 90AA smORFs using the lowest common ancestor (LCA), ignoring the un-assigned rank to make it more specific.
-
-**Habitat annotation:**
-
-The metadata of samples was manually curated starting from annotations in the [NCBI Biosample database](https://www.ncbi.nlm.nih.gov/biosample/?term=) and corresponding manuscripts. Based on the environment ontology of [EMBL-EBI Ontology Lookup Service](https://www.ebi.ac.uk/ols4) and host identifier in [NCBI taxonomy database](https://www.ncbi.nlm.nih.gov/taxonomy/?term=), we defined 157 specific habitats classification in total and divided them into 8 major categories: mammal gut, anthropogenic, other-human, other-animal, aquatic, human gut, soil/plant, and other. 
-
-We recorded the habitats of smORFs according to the samples they originated from.
-
-#### Conserved domain annotation
+##### Conserved domain annotation
 The representative sequences of 90AA smORFs clusters were searched against [NCBI CDD database](https://www.ncbi.nlm.nih.gov/cdd/) by RPS-blast. Hits with an e-value maximum of 0.01 and at least 80% of coverage of PSSM's length were retained and considered significant.
 
-#### Cellular localization prediction
-[TMHMM2](https://services.healthtech.dtu.dk/services/TMHMM-2.0/) was run on the representative sequences of 90AA smORFs clusters. 
+##### Cellular localization prediction
+- [TMHMM2](https://services.healthtech.dtu.dk/services/TMHMM-2.0/) was run on the representative sequences of 90AA smORFs clusters. 
+- [SignalP-4.1](https://services.healthtech.dtu.dk/services/SignalP-4.1/) was run on the representative sequences of 90AA smORFs clusters both with 'gram+' and 'gram-' modes.
 
-[SignalP-4.1](https://services.healthtech.dtu.dk/services/SignalP-4.1/) was run on the representative sequences of 90AA smORFs clusters both with 'gram+' and 'gram-' modes.
-
-#### Quality assessment
+##### Quality assessment
 - **Terminal check:** We checked for the presence of an in-frame STOP upstream of smORFs. As a smORF predicted at the start of a contig that is not preceded by an in-frame STOP codon risks being a false positive originating from an interrupted fragment.
 - **Antifam:** We used HMMSearch to search smORFs against the [Antifam database](https://github.com/ebi-pf-team/antifam) to avoid spurious smORFs
 - **RNAcode:** We used [RNAcode](https://github.com/ViennaRNA/RNAcode), a tool to predict the coding potential of sequences based on evolutionary signatures, to identify the coding potential of 90AA smORF families containing > 8 sequences. 

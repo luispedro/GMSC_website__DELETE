@@ -75,6 +75,7 @@ content_geo =
     span [id "content"]
         [Markdown.toHtml [] """
 ##### Geographical distribution
+![Geographical distribution](assets/home_geo.svg)
 """ ]
 
 content_habitat : Html msg
