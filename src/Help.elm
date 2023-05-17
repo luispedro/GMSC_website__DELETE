@@ -13,6 +13,9 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 
 import Center
+import Shared exposing (..)
+
+
 
 main: Program () () Never
 main =
@@ -33,10 +36,10 @@ main =
             , Grid.containerFluid []
                 [ Grid.simpleRow
                     [ Grid.col []
-                        [ header
+                        [ Shared.header
                         , content
                         , Html.hr [] []
-                        , footer
+                        , Shared.footer
                         ]
                     ]
                 ]
@@ -124,33 +127,3 @@ The representative sequences of 90AA smORFs clusters were searched against [NCBI
 - **(Meta)Ribo-Seq:** We downloaded 142 publicly available (Meta)Ribo-Seq sets from the NCBI database.  We mapped reads against the representative smORFs of 90AA clusters by [BWA](https://github.com/lh3/bwa). The smORFs are considered to have translation evidence only if they are mapped by reads across at least 2 samples. 
 - **Metaproteomes:** We downloaded peptide datasets from 108 metaproteome projects of the [PRIDE database](https://www.ebi.ac.uk/pride/). We exactly matched 100AA smORFs to the identified peptides of each project. If the total k-mer coverage of peptides on a smORF is greater than 50%, then the smORF is considered translated and detected.
 """ ]
-
--- header
-
-
-header : Html msg
-header =
-    let
-        link target name =
-            Grid.col []
-                     [Html.a [href target] [Html.text name]
-                     ]
-    in div
-        [id "topbar"]
-        [Grid.simpleRow
-            [ link "/home/" "Home"
-            , link "/browse_data/" "Browse"
-            , link "/downloads/" "Downloads"
-            , link "/help/" "Help"
-            , link "/about/" "About&Contact"
-            ]
-        ]
-
--- FOOTER
-
-
-footer : Html msg
-footer =
-  div [id "footerbar"]
-      [ a [][ text "Copyright (c) 2023 GMSC authors. All rights reserved."]
-      ]

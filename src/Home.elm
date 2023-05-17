@@ -13,6 +13,7 @@ import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 
 import Center
+import Shared exposing (..)
 
 
 main: Program () () Never
@@ -34,13 +35,13 @@ main =
             , Grid.containerFluid []
                 [ Grid.simpleRow
                     [ Grid.col []
-                        [ header
+                        [ Shared.header
                         , intro
                         , content_geo
                         , content_habitat
                         , content_taxonomy
                         , Html.hr [] []
-                        , footer
+                        , Shared.footer
                         ]
                     ]
                 ]
@@ -90,34 +91,3 @@ content_taxonomy =
         [Markdown.toHtml [] """
 ##### Taxonomy distribution
 """ ]
-
--- header
-
-
-header : Html msg
-header =
-    let
-        link target name =
-            Grid.col []
-                     [Html.a [href target] [Html.text name]
-                     ]
-    in div
-        [id "topbar"]
-        [Grid.simpleRow
-            [ link "/home/" "Home"
-            , link "/browse_data/" "Browse"
-            , link "/downloads/" "Downloads"
-            , link "/help/" "Help"
-            , link "/about/" "About&Contact"
-            ]
-        ]
-
--- FOOTER
-
-
-footer : Html msg
-footer =
-  div [id "footerbar"]
-      [ a [][ text "Copyright (c) 2023 GMSC authors. All rights reserved."]
-      ]
-      
