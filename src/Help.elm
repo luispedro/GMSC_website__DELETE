@@ -85,7 +85,7 @@ smORFs in the catalog are identified with the scheme `GMSC10.100AA.XXX_XXX_XXX` 
 
 87,920 high-quality microbial genomes were downloaded from the [ProGenomes v2 database](https://progenomes.embl.de/).
 
-## Method
+## Construction of GMSC
 A figure overview
 #### Assembly of contigs and prediction of smORFs
 The reads &gt; 60 bps were processed after trimming positions with quality &lt; 25 using [NGLess](https://github.com/ngless-toolkit/ngless). Filtered reads were assembled into contigs using [Megahit](https://github.com/voutcn/megahit).
@@ -100,7 +100,7 @@ All predicted smORFs were removed redundancy with 100% amino acid sequence ident
 
 The taxonomy of assembled contigs encoding the small proteins was annotated using [MMSeqs2](https://github.com/soedinglab/MMseqs2) against the [GTDB database](https://gtdb.ecogenomic.org/). 
 
-we recorded the taxonomy of smORFs based on the taxonomy of the contigs of metagenomes or genomes of [Progenome2 database](https://progenomes.embl.de/) from which the smORFs were predicted. Subsequently, we assign taxonomy for 100AA and 90AA smORFs using the lowest common ancestor (LCA), ignoring the un-assigned rank to make it more specific.
+We recorded the taxonomy of smORFs based on the taxonomy of the contigs of metagenomes or genomes of [Progenome v2 database](https://progenomes.embl.de/) from which the smORFs were predicted. Subsequently, we assign taxonomy for 100AA and 90AA smORFs using the lowest common ancestor (LCA), ignoring the un-assigned rank to make it more specific.
 
 **Habitat annotation:**
 
@@ -117,9 +117,12 @@ The representative sequences of 90AA smORFs clusters were searched against [NCBI
 [SignalP-4.1](https://services.healthtech.dtu.dk/services/SignalP-4.1/) was run on the representative sequences of 90AA smORFs clusters both with 'gram+' and 'gram-' modes.
 
 #### Quality assessment
-Description
-## Refrence
-Description
+- **Terminal check:** We checked for the presence of an in-frame STOP upstream of smORFs. As a smORF predicted at the start of a contig that is not preceded by an in-frame STOP codon risks being a false positive originating from an interrupted fragment.
+- **Antifam:** We used HMMSearch to search smORFs against the [Antifam database](https://github.com/ebi-pf-team/antifam) to avoid spurious smORFs
+- **RNAcode:** We used [RNAcode](https://github.com/ViennaRNA/RNAcode), a tool to predict the coding potential of sequences based on evolutionary signatures, to identify the coding potential of 90AA smORF families containing > 8 sequences. 
+- **Metatranscriptomes:** We downloaded 221 sets of publicly available metatranscriptome data from the NCBI database paired with the metagenomic samples we used in our catalogue. We mapped reads against the representative smORFs of 90AA clusters by [BWA](https://github.com/lh3/bwa). The smORFs are considered to have transcriptional evidence only if they are mapped by reads across at least 2 samples. 
+- **(Meta)Ribo-Seq:** We downloaded 142 publicly available (Meta)Ribo-Seq sets from the NCBI database.  We mapped reads against the representative smORFs of 90AA clusters by [BWA](https://github.com/lh3/bwa). The smORFs are considered to have translation evidence only if they are mapped by reads across at least 2 samples. 
+- **Metaproteomes:** We downloaded peptide datasets from 108 metaproteome projects of the [PRIDE database](https://www.ebi.ac.uk/pride/). We exactly matched 100AA smORFs to the identified peptides of each project. If the total k-mer coverage of peptides on a smORF is greater than 50%, then the smORF is considered translated and detected.
 """ ]
 
 -- header

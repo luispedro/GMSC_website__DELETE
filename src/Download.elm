@@ -63,14 +63,14 @@ We provide a 100% non-redundant catalog (964,970,496 smORFs) and a 90% amino-aci
   - cellular localization prediction
   - metadata
 
-### Protein sequence(.fasta)
+### Protein sequence (.fasta)
 Fasta file of 100AA / 90AA protein sequences.
 
 **100AA catalog:**&emsp;[GMSC10.100AA.faa.xz](https://gmgc.embl.de/download.cgi)
 
 **90AA catalog:**&emsp;[GMSC10.90AA.faa.xz](https://gmgc.embl.de/download.cgi)
 
-### Nucleotide sequence(.fasta)
+### Nucleotide sequence (.fasta)
 Fasta file of 100AA / 90AA nucleotide sequences.
 
 **100AA catalog:**&emsp;[GMSC10.100AA.fna.xz](https://gmgc.embl.de/download.cgi)
