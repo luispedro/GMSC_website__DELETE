@@ -52,6 +52,8 @@ span#content
     margin-bottom:0.3em;
 }
 
+
+
 /*help span*/
 span#help
 {
@@ -63,7 +65,7 @@ span#help
     padding: 4px;
     margin-bottom:2em;
 }
-span#help h2,h3,h4,h5{
+span#help h2,h3{
     color: #158BB8;
     text-align:left;
     padding: 5px;
@@ -72,6 +74,15 @@ span#help h2,h3,h4,h5{
     left:35px;
     width: 95%;
 }
+span#help h4{
+    color: #158BB8;
+    text-align:left;
+    position:relative;
+    left:35px;
+    width: 95%;
+}
+
+
 
 /*header*/
 div#topbar {
@@ -108,11 +119,9 @@ div#footerbar a {
 
 
 
-
 /*link*/
 a:link {color:#0678eb;}      
 a:visited {color:#772585;}  
-
 
 
 
