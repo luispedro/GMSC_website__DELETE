@@ -87,7 +87,8 @@ content_habitat =
 
 content_taxonomy : Html msg
 content_taxonomy =
-    span [id "content"]
+    span [id "home"]
         [Markdown.toHtml [] """
 ##### Taxonomy distribution
+![Taxonomy distribution](assets/home_taxonomy.svg)
 """ ]

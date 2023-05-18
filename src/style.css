@@ -77,7 +77,23 @@ span#content
     left:320px;
     margin-bottom:0.3em;
 }
-
+span#home
+{
+	display:block;
+    background-color:#ffffff;
+    border:2px solid #ebf7fc;
+    border-radius:5px;
+    position:relative;
+    width:60%;
+    left:320px;
+    margin-bottom:0.3em;
+}
+span#home img
+{
+    max-width : 150%;
+    position:relative;
+    left:-150px;
+}
 
 
 /*help span style*/
