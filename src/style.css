@@ -1,6 +1,7 @@
 h1 {
     font-variant: small-caps;
     border-bottom: solid 1px #5CB3CC;
+    padding: 10px 0px;
     color: #0b445a;
     position:relative;
     left:35px;
@@ -48,6 +49,37 @@ ul ul {
 
 img {
     max-width : 100%
+}
+
+table 
+{
+    width:50%;
+    position:relative;
+    left:80px;
+    border-collapse:collapse;
+}
+td
+{
+	border:1px solid #ffffff;
+    text-align:left;
+    height:50px;
+    padding: 0px 20px; 
+    text-align:left;
+    border-bottom: solid 1px #c8d4d7;
+}
+td#info
+{
+	border:1px solid #ffffff;
+    font-weight:bold;
+    text-align:left;
+    height:50px;
+    padding: 0px 20px; 
+    text-align:left;
+    border-bottom: solid 1px #c8d4d7;
+}
+tr#alt td 
+{
+	background-color:#ebf7fc;
 }
 
 
@@ -143,6 +175,55 @@ span#help img {
     width: 95%;
     left:400px;
 }
+
+/*sequence span style*/
+span#sequence
+{
+	display:block;
+    position:relative;
+    width: 95%;
+    left:35px;
+    padding: 4px;
+    margin-bottom:2em;
+}
+span#sequence h2,h3{
+    color: #158BB8;
+    text-align:left;
+    padding: 5px;
+    border-bottom: solid 1px #5CB3CC;
+    position:relative;
+    left:35px;
+    width: 95%;
+}
+span#sequence h5{
+    color: #158BB8;
+    text-align:left;
+    position:relative;
+    left:35px;
+    width: 95%;
+}
+/*1st list*/
+span#sequence ul {
+    list-style: disc;
+    background-color:#ffffff;
+    width: 95%;
+    position:relative;
+    left:35px;
+}
+/*2nd list*/
+span#sequence ul ul {
+    list-style: circle;
+    position:relative;
+    width: 95%;
+    left:0px;
+}
+span#sequence img {
+    max-width : 35%;
+    position:relative;
+    width: 95%;
+    left:400px;
+}
+
 
 /*header*/
 div#topbar {
