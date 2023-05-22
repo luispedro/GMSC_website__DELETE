@@ -1,4 +1,4 @@
-module Sequence exposing (..)
+module Cluster exposing (..)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr
 import Html.Attributes exposing (..)
@@ -38,6 +38,8 @@ main =
                         , identifier
                         , content
                         , Html.hr [] []
+                        , members
+                        , Html.hr [] []
                         , Shared.footer
                         ]
                     ]
@@ -53,29 +55,31 @@ identifier : Html msg
 identifier =
     span [id "sequence"]
         [Markdown.toHtml [] """
-# GMSC10.100AA.000_000_009
+# GMSC10.90AA.000_000_001
 """ ]
 
 content : Html msg
-content = table [] [ tr [] [ td [id "info"] [text "protein sequence"]
-                           , td [] [text "MAAAAAAAAAADAGDEDAAFTVDSAEGHELAWHAVQELEYLSD"]
+content = table [] [ tr [] [ td [id "info"] [text "Consensus sequence"]
+                           , td [] [text "MAAAAAAAAAAAAAAAAAAAAAAAAVAVAVAAAATAA"]
                            ]
-                    , tr [id "alt"] [ td [id "info"] [text "Length"]
-                            , td [] [text "43"]
+                    , tr [id "alt"] [ td [id "info"] [text "Taxonomic assignment"]
+                            , td [] [text "-"]
                             ]
-                    , tr [] [ td [id "info"] [text "Taxonomic assignment"]
-                            , td [] [text "f__Streptosporangiaceae"]
-                            ]
-                    , tr [id "alt"] [ td [id "info"] [text "Habitat"]
-                            , td [] [text "soil"]
-                            ]
-                    , tr [] [ td [id "info"] [text "Protein cluster"]
-                            , td [] [a [ href "https://guide.elm-lang.org" ] [ text "GMSC10.90AA.000_000_083" ]]
+                    , tr [] [ td [id "info"] [text "Habitat"]
+                            , td [] [text "lake associated"]
                             ]
                     , tr [id "alt"] [ td [id "info"] [text "Conserved domain"]
                             , td [] [text "-"]
                             ]
                     , tr [] [ td [id "info"] [text "Cellular localization"]
-                            , td [] [text "-"]
+                            , td [] [text "Transmembrane or secreted"]
                             ]
+                    , tr [id "alt"] [ td [id "info"] [text "Number of 100AA smORFs:"]
+                            , td [] [text "1"]
+                            ]                    
                     ]
+
+members : Html msg
+members = div [] [h4 [id "cluster"] [ text  "This 90AA cluster contains the following 100AA smORFs:"]
+                 , p [] [text "a table to be done"]
+                 ]

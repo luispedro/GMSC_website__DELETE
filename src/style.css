@@ -224,6 +224,13 @@ span#sequence img {
     left:400px;
 }
 
+h4#cluster{
+    color: #158BB8;
+    text-align:left;
+    position:relative;
+    left:80px;
+    width: 95%;
+}
 
 /*header*/
 div#topbar {
