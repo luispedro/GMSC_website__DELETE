@@ -37,8 +37,9 @@ main =
                         [ Shared.header
                         , identifier
                         , content
-                        , Html.hr [] []
+                        , title
                         , members
+                        , page_select
                         , Html.hr [] []
                         , Shared.footer
                         ]
@@ -76,10 +77,36 @@ content = table [] [ tr [] [ td [id "info"] [text "Consensus sequence"]
                             ]
                     , tr [id "alt"] [ td [id "info"] [text "Number of 100AA smORFs:"]
                             , td [] [text "1"]
-                            ]                    
+                            ]       
+                    , tr [] [ td [id "info"] [text "Quality"]
+                            , td [] [text "High quality"]
+                            ]             
                     ]
 
+title : Html msg
+title = div [] [h4 [id "cluster"] [ text  "This 90AA cluster contains the following 100AA smORFs:"]]
+
 members : Html msg
-members = div [] [h4 [id "cluster"] [ text  "This 90AA cluster contains the following 100AA smORFs:"]
-                 , p [] [text "a table to be done"]
-                 ]
+members = table [id "member"] [  tr [] [ th [] [text "100AA smORF accession"]
+                            , th [] [text "Protein sequence"]
+                            , th [] [text "Taxonomy"]
+                            , th [] [text "Habitat"]
+                            , th [] [text "Quality"]
+                            ]
+                    , tr [] [ td [id "member"] [a [ href "https://guide.elm-lang.org" ] [text "GMSC10.100AA.000_000_001"]]
+                            , td [id "member"] [text "MAAAAAAAAAAAAAAAAAAAAAAAAVAVAVAAAATAA"]
+                            , td [id "member"] [text "-"]
+                            , td [id "member"] [text "lake associated"]
+                            , td [id "member"] [text "High quality"]
+                            ]
+                   ]
+
+page_select : Html msg
+page_select = div [class "dropdown"]
+                  [ p [class "number"] [ text "Total 1"]
+                  , button [class "dropbtn"] [text "5/Page"]
+                  , div [class "dropdown-content"] 
+                        [ p [] [text "10/Page"]
+                        , p [] [text "15/Page"]
+                        , p [] [text "20/Page"]]
+                  ]
