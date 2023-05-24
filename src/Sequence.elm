@@ -11,7 +11,7 @@ import Bootstrap.CDN as CDN
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
-
+import Bootstrap.Table as Table
 import Shared exposing (..)
 
 
@@ -57,25 +57,42 @@ identifier =
 """ ]
 
 content : Html msg
-content = table [] [ tr [] [ td [id "info"] [text "protein sequence"]
-                           , td [] [text "MAAAAAAAAAADAGDEDAAFTVDSAEGHELAWHAVQELEYLSD"]
-                           ]
-                    , tr [id "alt"] [ td [id "info"] [text "Length"]
-                            , td [] [text "43"]
-                            ]
-                    , tr [] [ td [id "info"] [text "Taxonomic assignment"]
-                            , td [] [text "f__Streptosporangiaceae"]
-                            ]
-                    , tr [id "alt"] [ td [id "info"] [text "Habitat"]
-                            , td [] [text "soil"]
-                            ]
-                    , tr [] [ td [id "info"] [text "Protein cluster"]
-                            , td [] [a [ href "https://guide.elm-lang.org" ] [ text "GMSC10.90AA.000_000_083" ]]
-                            ]
-                    , tr [id "alt"] [ td [id "info"] [text "Conserved domain"]
-                            , td [] [text "-"]
-                            ]
-                    , tr [] [ td [id "info"] [text "Cellular localization"]
-                            , td [] [text "-"]
-                            ]
-                    ]
+content = Table.table
+    { options = [ Table.striped, Table.small,Table.hover]
+    , thead =  Table.simpleThead []
+    , tbody =
+        Table.tbody []
+            [ Table.tr []
+                [ Table.td [] [p [id "title"] [text "Protein sequence"]  ]
+                , Table.td [] [p [id "detail"] [text "MAAAAAAAAAADAGDEDAAFTVDSAEGHELAWHAVQELEYLSD"] ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Length"] ]
+                , Table.td [] [ p [id "detail"] [text "43"] ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Taxonomic assignment"]  ]
+                , Table.td [] [ p [id "detail"] [text "f__Streptosporangiaceae"]  ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Habitat"]  ]
+                , Table.td [] [ p [id "detail"] [text "soil"]  ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Protein cluster"]  ]
+                , Table.td [] [a [ href "https://guide.elm-lang.org" ] [ text "GMSC10.90AA.000_000_083" ]]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Conserved domain"]  ]
+                , Table.td [] [ p [id "detail"] [text "-"]  ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Cellular localization"]  ]
+                , Table.td [] [ p [id "detail"] [text "-"]  ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Quality"]  ]
+                , Table.td [] [ p [id "detail"] [text "High quality"]  ]
+                ]
+            ]
+    }

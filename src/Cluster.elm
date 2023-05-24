@@ -11,7 +11,9 @@ import Bootstrap.CDN as CDN
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
-
+import Bootstrap.Table as Table
+import Bootstrap.Button as Button
+import Bootstrap.Dropdown as Dropdown
 import Shared exposing (..)
 
 
@@ -60,46 +62,84 @@ identifier =
 """ ]
 
 content : Html msg
-content = table [] [ tr [] [ td [id "info"] [text "Consensus sequence"]
-                           , td [] [text "MAAAAAAAAAAAAAAAAAAAAAAAAVAVAVAAAATAA"]
-                           ]
-                    , tr [id "alt"] [ td [id "info"] [text "Taxonomic assignment"]
-                            , td [] [text "-"]
-                            ]
-                    , tr [] [ td [id "info"] [text "Habitat"]
-                            , td [] [text "lake associated"]
-                            ]
-                    , tr [id "alt"] [ td [id "info"] [text "Conserved domain"]
-                            , td [] [text "-"]
-                            ]
-                    , tr [] [ td [id "info"] [text "Cellular localization"]
-                            , td [] [text "Transmembrane or secreted"]
-                            ]
-                    , tr [id "alt"] [ td [id "info"] [text "Number of 100AA smORFs:"]
-                            , td [] [text "1"]
-                            ]       
-                    , tr [] [ td [id "info"] [text "Quality"]
-                            , td [] [text "High quality"]
-                            ]             
-                    ]
+content = Table.table
+    { options = [ Table.striped, Table.small,Table.hover]
+    , thead =  Table.simpleThead []
+    , tbody =
+        Table.tbody []
+            [ Table.tr []
+                [ Table.td [] [p [id "title"] [text "Consensus sequence"]  ]
+                , Table.td [] [p [id "detail"] [text "MAAAAAAAAAAAAAAAAAAAAAAAAVAVAVAAAATAA"] ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Taxonomic assignment"] ]
+                , Table.td [] [ p [id "detail"] [text "-"] ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Habitat"]  ]
+                , Table.td [] [ p [id "detail"] [text "lake associated"]  ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Conserved domain"]  ]
+                , Table.td [] [ p [id "detail"] [text "-"]  ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Cellular localization"]  ]
+                , Table.td [] [ p [id "detail"] [text "Transmembrane or secreted"]  ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Number of 100AA smORFs:"]  ]
+                , Table.td [] [ p [id "detail"] [text "1"]  ]
+                ]
+            , Table.tr []
+                [ Table.td [] [ p [id "title"] [text "Quality"]  ]
+                , Table.td [] [ p [id "detail"] [text "High quality"]  ]
+                ]
+            ]
+    }
 
 title : Html msg
-title = div [] [h4 [id "cluster"] [ text  "This 90AA cluster contains the following 100AA smORFs:"]]
+title = div [id "cluster"] [ h4 [id "cluster"] [ text  "This 90AA cluster contains the following 100AA smORFs:"]
+            ,Button.button [ Button.info,Button.attrs [] ] [ text "Download .csv" ]
+               ]
 
 members : Html msg
-members = table [id "member"] [  tr [] [ th [] [text "100AA smORF accession"]
-                            , th [] [text "Protein sequence"]
-                            , th [] [text "Taxonomy"]
-                            , th [] [text "Habitat"]
-                            , th [] [text "Quality"]
-                            ]
-                    , tr [] [ td [id "member"] [a [ href "https://guide.elm-lang.org" ] [text "GMSC10.100AA.000_000_001"]]
-                            , td [id "member"] [text "MAAAAAAAAAAAAAAAAAAAAAAAAVAVAVAAAATAA"]
-                            , td [id "member"] [text "-"]
-                            , td [id "member"] [text "lake associated"]
-                            , td [id "member"] [text "High quality"]
-                            ]
-                   ]
+members = Table.table
+    { options = [ Table.hover ]
+    , thead =  Table.simpleThead
+        [ Table.th [] [ text "100AA smORF accession" ]
+        , Table.th [] [ text "Protein sequence" ]
+        , Table.th [] [ text "Taxonomy" ]
+        , Table.th [] [ text "Habitat" ]
+        , Table.th [] [ text "Quality" ]
+        ]
+    , tbody =
+        Table.tbody []
+            [ Table.tr []
+                [ Table.td [] [a [ href "https://guide.elm-lang.org" ] [text "GMSC10.100AA.000_000_001"]]
+                , Table.td [] [ text "MAAAAAAAAAAAAAAAAAAAAAAAAVAVAVAAAATAA" ]
+                , Table.td [] [ text "-" ]
+                , Table.td [] [ text "lake associated" ]
+                , Table.td [] [ text "High quality" ]
+                ]
+            , Table.tr []
+                [ Table.td [] [a [ href "https://guide.elm-lang.org" ] [text "GMSC10.100AA.000_000_002"]]
+                , Table.td [] [ text "MAAAAAAAAAAAAAAVAVAVAAAATAA" ]
+                , Table.td [] [ text "f__Streptosporangiaceae" ]
+                , Table.td [] [ text "lake associated" ]
+                , Table.td [] [ text "High quality" ]
+                ]
+            , Table.tr []
+                [ Table.td [] [a [ href "https://guide.elm-lang.org" ] [text "GMSC10.100AA.000_000_003"]]
+                , Table.td [] [ text "MAAAAAAAAAAAAAVAVAVAAA" ]
+                , Table.td [] [ text "-" ]
+                , Table.td [] [ text "soil" ]
+                , Table.td [] [ text "High quality" ]
+                ]
+            ]
+    }
+
+
 
 page_select : Html msg
 page_select = div [class "dropdown"]

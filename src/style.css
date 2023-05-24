@@ -2,6 +2,7 @@ div.search {
     position:relative;
     left:120px;
 }
+
 h1 {
     font-variant: small-caps;
     border-bottom: solid 1px #5CB3CC;
@@ -16,7 +17,6 @@ h2,h3,h4,h5{
     color: #158BB8;
     text-align:center;
 }
-
 
 
 /*paragragh*/
@@ -57,10 +57,9 @@ img {
 
 table 
 {
-    width:50%;
+    max-width:85%;
     position:relative;
-    left:80px;
-    border-collapse:collapse;
+    left:110px;
 }
 table#member
 {
@@ -72,20 +71,32 @@ table#member
 th
 {
 	border:1px solid #ffffff;
-    text-align:left;
     height:50px;
     padding: 0px 20px; 
     text-align:left;
     border-bottom: solid 1px #c8d4d7;
 }
+
 td
 {
-	border:1px solid #ffffff;
-    text-align:left;
-    height:50px;
-    padding: 0px 20px; 
+	border:1px solid #f6f4f4;
     text-align:left;
     border-bottom: solid 1px #c8d4d7;
+}
+td p#title{
+    color:#2d2c2c;
+    font-weight:bold;
+    font-family:arial;
+    width: 100%;
+    position:relative;
+    left:10px;
+}
+td p#detail{
+    color:#2d2c2c;
+    font-family:arial;
+    width: 100%;
+    position:relative;
+    left:10px;
 }
 td#info
 {
@@ -257,7 +268,11 @@ h4#cluster{
     text-align:left;
     position:relative;
     margin-top: 2em;
-    left:80px;
+    left:110px;
+}
+div#cluster button{
+    left:1200px;
+    position:relative;
 }
 
 
@@ -281,9 +296,9 @@ button.dropbtn{
     width: 70px;
     cursor: pointer;
 }
+
 div.dropdown-content {
     display: none;
-    position: relative;
 }
 
 div.dropdown-content p {
@@ -295,28 +310,39 @@ div.dropdown-content p {
 }
 
 div.dropdown-content p:hover {
+    display: inline;
     background-color: #f1f1f1;
+    max-width: 70px;
+}
+div.dropdown:hover{
+    display: inline;
+    max-width: 70px;  
+}
+div.dropdown:hover div.dropdown-content {
+    display: inline;
+    max-width: 70px;
 }
 
-div.dropdown:hover div.dropdown-content {
-    display: block;
-}
 
 ul.pagination {
-    display: inline;
+    display: inline-block;
+    background-color: #ffffff;
     position: relative;
     left:600px
 }
+
 ul.pagination li {
     display: inline;
+    background-color: #ffffff;
 }
+
 ul.pagination li a {
     background-color: #ffffff;
     color: black;
-    float: left;
-    padding: 8px 16px;
+    padding: 0px 16px;
     text-decoration: none;
 }
+
 ul.pagination li a:hover:not(.active) {
     background-color: #ddd;
 }
