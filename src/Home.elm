@@ -11,6 +11,11 @@ import Bootstrap.CDN as CDN
 import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
+import Bootstrap.Button as Button
+import Bootstrap.ButtonGroup as ButtonGroup
+import Bootstrap.Form as Form
+import Bootstrap.Form.Input as Input
+import Bootstrap.Form.Textarea as Textarea
 
 import Shared exposing (..)
 
@@ -36,6 +41,7 @@ main =
                     [ Grid.col []
                         [ Shared.header
                         , intro
+                        , search
                         , content_geo
                         , content_habitat
                         , content_taxonomy
@@ -92,3 +98,45 @@ content_taxonomy =
 ##### Taxonomy distribution
 ![Taxonomy distribution](assets/home_taxonomy.svg)
 """ ]
+
+search : Html msg
+search = 
+  div [class "search"]
+    [ Form.form []
+        [ Form.row [] 
+            [ Form.col [ Col.sm10 ]
+                [ h4 [] [ text "Find homologues by sequence (GMSC-mapper) or search by identifier"]
+                ]
+            ]       
+        , Form.row [] 
+            [ Form.col [ Col.sm10 ]
+                [ Form.group []
+                    [ Form.label [] [ text "Identifier" ]
+                    , Input.text [ Input.attrs [ placeholder "GMSC10.100AA_000_000_000   or   GMSC10.90AA_000_000_000" ] ]
+                    , Button.button[ Button.info,Button.attrs [ class "float-right"]] [ text "Submit" ]
+                    ]            
+                ]
+            ]
+        , Form.row [] 
+            [ Form.col [ Col.sm10 ]
+                [ ButtonGroup.buttonGroup [ ButtonGroup.small ]
+                    [ ButtonGroup.button [ Button.outlineInfo ] [ text "Search from contigs" ]
+                    , ButtonGroup.button [ Button.outlineInfo,Button.attrs [ class "ml-3" ]] [ text "Search from proteins" ]
+                    ]
+                ]
+            ]
+       , Form.row [] 
+            [ Form.col [ Col.sm10 ]
+                [ Form.group []
+                    [ label [ for "myarea"] [ text "Input an amino acid / nucleotide sequence in FASTA format"]
+                    , Textarea.textarea
+                        [ Textarea.id "myarea"
+                        , Textarea.rows 3
+                        , Textarea.attrs [ placeholder ">contigID\n AATACTACATGTCA..." ]
+                        ]
+                    , Button.button[ Button.info,Button.attrs [ class "float-right"]] [ text "Submit" ]
+                    ]
+                ]
+            ]            
+        ]
+    ]

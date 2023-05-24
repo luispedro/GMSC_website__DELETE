@@ -1,3 +1,7 @@
+div.search {
+    position:relative;
+    left:120px;
+}
 h1 {
     font-variant: small-caps;
     border-bottom: solid 1px #5CB3CC;
@@ -256,6 +260,70 @@ h4#cluster{
     left:80px;
 }
 
+
+
+
+/*dropdown*/
+div.dropdown {
+    margin: 1em;
+}
+p.number {
+    display:inline;
+    margin: 3em;
+}
+
+button.dropbtn{
+    border: solid 1px #0b445a;
+    background-color: #ffffff;
+    text-align: center;
+    display: inline-block;
+    margin: 4px 2px;
+    width: 70px;
+    cursor: pointer;
+}
+div.dropdown-content {
+    display: none;
+    position: relative;
+}
+
+div.dropdown-content p {
+    color: black;
+    text-align: center;
+    max-width: 70px;
+    position: relative;
+    left:145px
+}
+
+div.dropdown-content p:hover {
+    background-color: #f1f1f1;
+}
+
+div.dropdown:hover div.dropdown-content {
+    display: block;
+}
+
+ul.pagination {
+    display: inline;
+    position: relative;
+    left:600px
+}
+ul.pagination li {
+    display: inline;
+}
+ul.pagination li a {
+    background-color: #ffffff;
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+ul.pagination li a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+
+
+
 /*header*/
 div#topbar {
     border-bottom: solid 2px #c4cdcf;
@@ -279,54 +347,6 @@ div#topbar a:hover {
     width:50%;
     left:100px;
   }
-
-
-
-
-
-
-
-
-
-
-/*dropdown*/
-div.dropdown {
-    position: relative;
-    margin: 1em;
-}
-p.number {
-    display:inline;
-    margin: 3em;
-}
-
-button{
-    border: solid 1px #0b445a;
-    background-color: #ffffff;
-    text-align: center;
-    display: inline-block;
-    margin: 4px 2px;
-    width: 70px;
-    position: relative;
-    cursor: pointer;
-}
-div.dropdown-content {
-    display: none;
-    position: relative;
-}
-
-div.dropdown-content p {
-    color: black;
-    text-align: center;
-    max-width: 70px;
-    position: relative;
-    left:145px
-}
-
-div.dropdown-content p:hover {background-color: #f1f1f1}
-
-div.dropdown:hover div.dropdown-content {
-    display: block;
-}
 
 /*footer*/
 div#footerbar a {
