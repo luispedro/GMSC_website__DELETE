@@ -19,25 +19,37 @@ import Bootstrap.Form.Textarea as Textarea
 
 import Shared exposing (..)
 
-
+type OperationType = Contigs | Proteins
 
 type alias IdentifierQueryModel =
-    { facontent : String
+    { optype : Maybe OperationType
+    , idcontent : String
+    , seqcontent: String
     }
 
 type Model =
         IdentifierQuery IdentifierQueryModel
 
 type Msg
-    = SetExample
-    | Cleartext
+    = SelectOp OperationType
+    | SetIdentifierExample
+    | SetSeqExample
+    | ClearId
+    | ClearSeq
+
+-- INIT
 
 init : flags -> ( Model, Cmd Msg )
 init _ =
-    ( IdentifierQuery { facontent = ""}
+    ( IdentifierQuery 
+        { optype = Nothing
+        , idcontent = "" 
+        , seqcontent = ""
+        }
     , Cmd.none
     )
 
+-- UPDATE
 
 update : Msg -> Model -> ( Model, Cmd Msg)
 update msg model =
@@ -49,13 +61,43 @@ update msg model =
                     (qmpost, c) = f qm
                 in (IdentifierQuery qmpost, c)
     in case msg of
-        SetExample -> 
+        SelectOp p -> 
           ifQuery <| \qmodel ->
-            ( { qmodel | facontent = identifierExample }, Cmd.none )
-        Cleartext -> 
-          ifQuery <| \qmodel ->
-            ( { qmodel | facontent = "" }, Cmd.none )
+                -- If the example input is selected, switch it
+                if qmodel.optype == Just Contigs && qmodel.seqcontent == contigExample && p == Proteins then
+                    ( { qmodel | optype = Just Proteins, seqcontent = "" }, Cmd.none )
+                else if qmodel.optype == Just Proteins && qmodel.seqcontent == proteinExample && p == Contigs then
+                    ( { qmodel | optype = Just Contigs, seqcontent = "" }, Cmd.none )
 
+                else
+                    ( { qmodel | optype = Just p, seqcontent = ""}, Cmd.none )
+        
+        SetIdentifierExample ->
+          ifQuery <| \qmodel ->
+            ( { qmodel | idcontent = identifierExample }, Cmd.none )
+
+
+        SetSeqExample -> 
+          ifQuery <| \qmodel ->
+            let
+              nc =
+                case qmodel.optype of
+                  Nothing -> -- When click example without selecting contig or protein
+                    "Please select contig or protein mode above."
+                  Just Contigs ->
+                    contigExample
+                  Just Proteins ->
+                    proteinExample
+            in
+              ( { qmodel | seqcontent = nc }, Cmd.none )
+
+        ClearId -> 
+          ifQuery <| \qmodel ->
+            ( { qmodel | idcontent = "" }, Cmd.none )
+
+        ClearSeq -> 
+          ifQuery <| \qmodel ->
+            ( { qmodel | seqcontent = "" }, Cmd.none )
 
 main: Program () Model Msg
 main =
@@ -147,7 +189,19 @@ content_taxonomy =
 
 search : IdentifierQueryModel -> Html Msg
 search model = 
-  div [class "search"]
+  let
+    buttonStyle who active =
+            case active of
+                Nothing ->
+                    [ Button.outlineInfo, Button.onClick (SelectOp who) ]
+
+                Just p ->
+                    if who == p then
+                        [ Button.info, Button.onClick (SelectOp who) ]
+
+                    else
+                        [ Button.outlineInfo, Button.onClick (SelectOp who) ]
+  in div [class "search"]
         [ Form.row [] 
             [ Form.col [ Col.sm10 ]
                 [ h4 [] [ text "Find homologues by sequence (GMSC-mapper) or search by identifier"]
@@ -157,9 +211,9 @@ search model =
             [ Form.col [ Col.sm10 ]
                 [ Form.group []
                     [ Form.label [] [ text "Identifier" ]
-                    , Input.text [ Input.value model.facontent,Input.attrs [ placeholder "GMSC10.100AA_XXX_XXX_XXX   or   GMSC10.90AA_XXX_XXX_XXX" ] ]
-                    , Button.button [ Button.outlineSecondary, Button.attrs [ class "float-right"], Button.onClick SetExample] [ text "Example" ]
-                    , Button.button[ Button.light, Button.attrs [ class "float-right"], Button.onClick Cleartext] [ text "Clear" ]   
+                    , Input.text [ Input.value model.idcontent,Input.attrs [ placeholder "GMSC10.100AA_XXX_XXX_XXX   or   GMSC10.90AA_XXX_XXX_XXX" ] ]
+                    , Button.button [ Button.outlineSecondary, Button.attrs [ class "float-right"], Button.onClick SetIdentifierExample] [ text "Example" ]
+                    , Button.button[ Button.light, Button.attrs [ class "float-right"], Button.onClick ClearId] [ text "Clear" ]   
                     , Button.button[ Button.info, Button.attrs [ class "float-right"]] [ text "Submit" ] 
                     ]            
                 ]
@@ -173,8 +227,8 @@ search model =
         , Form.row [] 
             [ Form.col [ Col.sm10 ]
                 [ ButtonGroup.buttonGroup [ ButtonGroup.small ]
-                    [ ButtonGroup.button [ Button.outlineInfo ] [ text "Search from contigs" ]
-                    , ButtonGroup.button [ Button.outlineInfo,Button.attrs [ class "ml-3" ]] [ text "Search from proteins" ]
+                    [ ButtonGroup.button (buttonStyle Contigs model.optype) [ text "Search from contigs" ]
+                    , ButtonGroup.button (buttonStyle Proteins model.optype) [ text "Search from proteins" ]
                     ]
                 ]
             ]
@@ -184,11 +238,19 @@ search model =
                     [ label [ for "myarea"] [ text "Input an amino acid / nucleotide sequence in FASTA format"]
                     , Textarea.textarea
                         [ Textarea.id "myarea"
+                        , Textarea.value model.seqcontent
                         , Textarea.rows 3
-                        , Textarea.attrs [ placeholder ">contigID\n AATACTACATGTCA..." ]
+                        , case model.optype of
+                            Nothing ->
+                              Textarea.attrs [ placeholder "" ]
+                            Just p ->
+                              if p == Contigs then
+                                Textarea.attrs [ placeholder ">contigID\n AATACTACATGTCA..." ]
+                              else
+                                Textarea.attrs [ placeholder ">proteinID\n MTIISR..." ]
                         ]
-                    , Button.button[ Button.outlineSecondary,Button.attrs [ class "float-right"]] [ text "Example" ]
-                    , Button.button[ Button.light,Button.attrs [ class "float-right"]] [ text "Clear" ]   
+                    , Button.button[ Button.outlineSecondary,Button.attrs [ class "float-right"], Button.onClick SetSeqExample] [ text "Example" ]
+                    , Button.button[ Button.light,Button.attrs [ class "float-right"], Button.onClick ClearSeq] [ text "Clear" ]   
                     , Button.button[ Button.info,Button.attrs [ class "float-right"]] [ text "Submit" ]        
                     ]
                 ]
