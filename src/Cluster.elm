@@ -99,9 +99,11 @@ content = Table.table
     }
 
 title : Html msg
-title = div [id "cluster"] [ h4 [id "cluster"] [ text  "This 90AA cluster contains the following 100AA smORFs:"]
-            ,Button.button [ Button.info,Button.attrs [] ] [ text "Download .csv" ]
-               ]
+title = div [ id "cluster" ] 
+                [ h4 [id "cluster"] 
+                       [ text  "This 90AA cluster contains the following 100AA smORFs:"]
+                , Button.button [ Button.info,Button.attrs [] ] [ text "Download .csv" ]
+                ]
 
 members : Html msg
 members = Table.table

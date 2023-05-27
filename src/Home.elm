@@ -20,14 +20,54 @@ import Bootstrap.Form.Textarea as Textarea
 import Shared exposing (..)
 
 
-main: Program () () Never
+
+type alias IdentifierQueryModel =
+    { facontent : String
+    }
+
+type Model =
+        IdentifierQuery IdentifierQueryModel
+
+type Msg
+    = SetExample
+    | Cleartext
+
+init : flags -> ( Model, Cmd Msg )
+init _ =
+    ( IdentifierQuery { facontent = ""}
+    , Cmd.none
+    )
+
+
+update : Msg -> Model -> ( Model, Cmd Msg)
+update msg model =
+    let
+        ifQuery f = 
+          case model of
+            IdentifierQuery qm ->
+                let
+                    (qmpost, c) = f qm
+                in (IdentifierQuery qmpost, c)
+    in case msg of
+        SetExample -> 
+          ifQuery <| \qmodel ->
+            ( { qmodel | facontent = identifierExample }, Cmd.none )
+        Cleartext -> 
+          ifQuery <| \qmodel ->
+            ( { qmodel | facontent = "" }, Cmd.none )
+
+
+main: Program () Model Msg
 main =
     Browser.document
-    { init = \_ -> ((), Cmd.none)
-    , update = \_ _ -> ((), Cmd.none)
+    { init = init
+    , update = update
     , subscriptions = \_ -> Sub.none
-    , view = \_ ->
-        { title = "GMSC:Home"
+    , view = view
+    }
+
+view : Model -> Browser.Document Msg
+view model = { title = "GMSC:Home"
         , body =
             [ CDN.stylesheet
             , CDN.fontAwesome
@@ -41,7 +81,7 @@ main =
                     [ Grid.col []
                         [ Shared.header
                         , intro
-                        , search
+                        , viewModel model
                         , content_geo
                         , content_habitat
                         , content_taxonomy
@@ -52,7 +92,13 @@ main =
                 ]
             ]
         }
-    }
+    
+
+viewModel : Model -> Html Msg
+viewModel model = 
+  case model of
+    IdentifierQuery qm -> 
+      search qm
 
 -- main text
 
@@ -99,23 +145,22 @@ content_taxonomy =
 ![Taxonomy distribution](assets/home_taxonomy.svg)
 """ ]
 
-search : Html msg
-search = 
+search : IdentifierQueryModel -> Html Msg
+search model = 
   div [class "search"]
-    [ Form.form []
         [ Form.row [] 
             [ Form.col [ Col.sm10 ]
                 [ h4 [] [ text "Find homologues by sequence (GMSC-mapper) or search by identifier"]
                 ]
-            ]       
+            ]  
         , Form.row [] 
             [ Form.col [ Col.sm10 ]
                 [ Form.group []
                     [ Form.label [] [ text "Identifier" ]
-                    , Input.text [ Input.attrs [ placeholder "GMSC10.100AA_000_000_000   or   GMSC10.90AA_000_000_000" ] ]
-                    , Button.button[ Button.outlineSecondary,Button.attrs [ class "float-right"]] [ text "Example" ]
-                    , Button.button[ Button.light,Button.attrs [ class "float-right"]] [ text "Clear" ]   
-                    , Button.button[ Button.info,Button.attrs [ class "float-right"]] [ text "Submit" ]   
+                    , Input.text [ Input.value model.facontent,Input.attrs [ placeholder "GMSC10.100AA_XXX_XXX_XXX   or   GMSC10.90AA_XXX_XXX_XXX" ] ]
+                    , Button.button [ Button.outlineSecondary, Button.attrs [ class "float-right"], Button.onClick SetExample] [ text "Example" ]
+                    , Button.button[ Button.light, Button.attrs [ class "float-right"], Button.onClick Cleartext] [ text "Clear" ]   
+                    , Button.button[ Button.info, Button.attrs [ class "float-right"]] [ text "Submit" ] 
                     ]            
                 ]
             ]
@@ -149,4 +194,25 @@ search =
                 ]
             ]            
         ]
-    ]
+        
+identifierExample : String
+identifierExample = "GMSC10.100AA_000_000_000"
+
+contigExample : String
+contigExample = """>scaffold1
+CTTCTGATCTTTACGCAGCATTGTGTGTTTCCACCTTTCAAAAAATTCTCCGTGAACTGC
+GCCCTGGGAGTGGTGAAATCCTCCGCGGAACGAAGTCCCGGAATTGCGCACAAATTCACG
+TGCTGAACAATTTTACCATAGGAATGTGCGGTTGTAAAGAGAAAAATGCAAAAAATTCCT
+TATTTTTATAAAAGGAGCGGGGAAAAGAGGCGGAAAATATTTTTTTGAAAGGGGATTGAC
+AGAGAGAAACGGCCGTGTTATCCTAACTGTACTAACACACATAGTACAGTTGGTACAGTT
+CGGAGGAACGTTATGAAGGTCATCAAGAAGGTAGTAGCCGCCCTGATGGTGCTGGGAGCA
+CTGGCGGCGCTGACGGTAGGCGTGGTTTTGAAGCCGGGCCGGAAAGGAGACGAAACATGA
+TGCTGTTTGGTTTTGCGGGGATCGCCGCCATCGTGGGTCTGATTTTTGCCGCTGTTGTTC
+TGGTGTCCGTGGCCTTGCAGCCCTGAGAACGGGGCAGATGCAATGAGTACGCTGTTTTTG
+CTTGGTATCGCAGGCGCGGTACTGCTGGTTATTTTGCTGACAGCGGTGATCCTGCACCGC
+TGATCGAACATTCCTCAGAAAGGAGAGGCACACGTTCTGACATTGAATTACCGGGATTCC
+CGTCCCATTTATGAACAGATCAAGGACGGCCTGCGGCGGATGATCGTCACCGGGGCC"""
+
+proteinExample : String
+proteinExample = """>smORF1
+MTIISRNLFHFETVSRSLGIETEMNPFLGKHLNHQLIWCGLHGFGTAQAQAIGTEMQTNFRLFFAEFFPRFQDKPGARPLRRINPQGNLHIRFRC"""
