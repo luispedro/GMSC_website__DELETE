@@ -34,7 +34,18 @@ div.search {
     position:relative;
     left:120px;
 }
-
+div.fig {
+    max-width: 83%;
+    position:relative;
+    left:118px;
+}
+div.fig p{
+    color: #5CB3CC;
+    padding: 14px 0px;
+}
+div.fig img{
+    max-height: 550px;
+}
 /*database title and sequence title style*/
 h1 {
     font-variant: small-caps;

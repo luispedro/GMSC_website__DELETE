@@ -16,6 +16,12 @@ import Bootstrap.ButtonGroup as ButtonGroup
 import Bootstrap.Form as Form
 import Bootstrap.Form.Input as Input
 import Bootstrap.Form.Textarea as Textarea
+import Bootstrap.Carousel as Carousel
+import Bootstrap.Carousel.Slide as Slide
+import Bootstrap.Carousel as Carousel exposing (defaultStateOptions)
+import Bootstrap.Card as Card
+import Bootstrap.Text as Text
+import Bootstrap.Card.Block as Block
 
 import Shared exposing (..)
 
@@ -25,8 +31,10 @@ type alias IdentifierQueryModel =
     { optype : Maybe OperationType
     , idcontent : String
     , seqcontent: String
+    , carouselState : Carousel.State
     }
 
+        
 type Model =
         IdentifierQuery IdentifierQueryModel
 
@@ -36,8 +44,23 @@ type Msg
     | SetSeqExample
     | ClearId
     | ClearSeq
+    | CarouselMsg Carousel.Msg
+
+-- SUBSCRIPTIONS
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    case model of
+        IdentifierQuery qm ->
+            Carousel.subscriptions qm.carouselState CarouselMsg
 
 -- INIT
+
+myOptions =
+    { defaultStateOptions
+        | interval = Nothing
+        , pauseOnHover = False
+    }
 
 init : flags -> ( Model, Cmd Msg )
 init _ =
@@ -45,6 +68,7 @@ init _ =
         { optype = Nothing
         , idcontent = "" 
         , seqcontent = ""
+        , carouselState = Carousel.initialStateWithOptions myOptions
         }
     , Cmd.none
     )
@@ -68,14 +92,12 @@ update msg model =
                     ( { qmodel | optype = Just Proteins, seqcontent = "" }, Cmd.none )
                 else if qmodel.optype == Just Proteins && qmodel.seqcontent == proteinExample && p == Contigs then
                     ( { qmodel | optype = Just Contigs, seqcontent = "" }, Cmd.none )
-
                 else
                     ( { qmodel | optype = Just p, seqcontent = ""}, Cmd.none )
         
         SetIdentifierExample ->
           ifQuery <| \qmodel ->
             ( { qmodel | idcontent = identifierExample }, Cmd.none )
-
 
         SetSeqExample -> 
           ifQuery <| \qmodel ->
@@ -99,12 +121,16 @@ update msg model =
           ifQuery <| \qmodel ->
             ( { qmodel | seqcontent = "" }, Cmd.none )
 
+        CarouselMsg subMsg ->
+          ifQuery <| \qmodel ->
+            ({ qmodel | carouselState = Carousel.update subMsg qmodel.carouselState }, Cmd.none)
+
 main: Program () Model Msg
 main =
     Browser.document
     { init = init
     , update = update
-    , subscriptions = \_ -> Sub.none
+    , subscriptions = subscriptions
     , view = view
     }
 
@@ -123,10 +149,8 @@ view model = { title = "GMSC:Home"
                     [ Grid.col []
                         [ Shared.header
                         , intro
-                        , viewModel model
-                        , content_geo
-                        , content_habitat
-                        , content_taxonomy
+                        , viewSearch model
+                        , viewFig model
                         , Html.hr [] []
                         , Shared.footer
                         ]
@@ -136,11 +160,17 @@ view model = { title = "GMSC:Home"
         }
     
 
-viewModel : Model -> Html Msg
-viewModel model = 
+viewSearch : Model -> Html Msg
+viewSearch model = 
   case model of
     IdentifierQuery qm -> 
       search qm
+
+viewFig : Model -> Html Msg
+viewFig model = 
+  case model of
+    IdentifierQuery qm -> 
+      fig qm
 
 -- main text
 
@@ -161,30 +191,6 @@ The smORFs were clustered at 90% amino acid identity resulting in 288 million 90
   - quality assessment
   - conserved domain annotation
   - cellular localization prediction
-""" ]
-
-
-content_geo : Html msg
-content_geo =
-    span [id "content"]
-        [Markdown.toHtml [] """
-##### Geographical distribution
-![Geographical distribution](assets/home_geo.svg)
-""" ]
-
-content_habitat : Html msg
-content_habitat =
-    span [id "content"]
-        [Markdown.toHtml [] """
-##### Habitat distribution
-""" ]
-
-content_taxonomy : Html msg
-content_taxonomy =
-    span [id "home"]
-        [Markdown.toHtml [] """
-##### Taxonomy distribution
-![Taxonomy distribution](assets/home_taxonomy.svg)
 """ ]
 
 search : IdentifierQueryModel -> Html Msg
@@ -254,9 +260,49 @@ search model =
                     , Button.button[ Button.info,Button.attrs [ class "float-right"]] [ text "Submit" ]        
                     ]
                 ]
-            ]            
+            ]  
         ]
-        
+
+fig: IdentifierQueryModel -> Html Msg
+fig model = 
+  div [class "fig"]
+    [ Carousel.config CarouselMsg []
+        |> Carousel.withControls
+        |> Carousel.withIndicators
+        |> Carousel.slides
+            [Slide.config []
+              (Slide.customContent
+                (
+                Card.config
+                    [ Card.light
+                    , Card.attrs [ ]
+                    , Card.align Text.alignSmCenter
+                    ]
+                    |> Card.headerH4 [] 
+                        [ img [ src "assets/home_geo.svg" ] []
+                        , p [] [text " Geographical distribution"]
+                        ]
+                    |> Card.view
+                )        
+              )
+            , Slide.config []
+              (Slide.customContent
+                (
+                Card.config
+                    [ Card.light
+                    , Card.attrs [ ]
+                    , Card.align Text.alignSmCenter
+                    ]
+                    |> Card.headerH4 [] 
+                        [ img [ src "assets/home_taxonomy.svg" ] []
+                        , p [] [text " Taxonomy distribution"]
+                        ]
+                    |> Card.view
+                )        
+              )
+            ]
+        |> Carousel.view model.carouselState
+    ]
 identifierExample : String
 identifierExample = "GMSC10.100AA_000_000_000"
 
