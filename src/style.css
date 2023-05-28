@@ -29,24 +29,6 @@ div#footerbar a {
     padding: 14px 0px;
 }
 
-/*home search size*/
-div.search {
-    position:relative;
-    left:120px;
-}
-div.fig {
-    max-width: 83%;
-    position:relative;
-    left:118px;
-}
-div.fig p{
-    color: #5CB3CC;
-    padding: 14px 0px;
-}
-div.fig img{
-    max-height: 550px;
-}
-/*database title and sequence title style*/
 h1 {
     font-variant: small-caps;
     border-bottom: solid 1px #5CB3CC;
@@ -57,7 +39,6 @@ h1 {
     width: 95%;
 }
 
-/*home figure title style*/
 h2,h3,h4,h5{
     color: #158BB8;
     text-align:center;
@@ -160,6 +141,24 @@ span#home img
     position:relative;
     left:-150px;
 }
+/*home search size*/
+div.search {
+    position:relative;
+    left:120px;
+}
+div.fig {
+    max-width: 83%;
+    position:relative;
+    left:118px;
+}
+div.fig p{
+    color: #5CB3CC;
+    padding: 14px 0px;
+}
+div.fig img{
+    max-height: 550px;
+}
+
 
 /*Help page*/
 /*help span style*/
@@ -218,14 +217,16 @@ td p#title{
     font-family:arial;
     width: 100%;
     position:relative;
-    left:10px;
+    left:5px
 }
 td p#detail{
     color:#2d2c2c;
     font-family:arial;
-    width: 100%;
+    max-width: 1000px;
     position:relative;
-    left:10px;
+    left:5px;
+    word-wrap: break-word;
+    word-break: normal;
 }
 h4#cluster{
     color: #158BB8;
