@@ -30,6 +30,7 @@ type Model =
              , nuc: String
              , seqid: String
              , tax: String
+             , showtype: Bool
              }
 
 type APIResult =
@@ -39,21 +40,24 @@ type APIResult =
                   , nuc: String
                   , seqid: String
                   , tax: String
+                  , showtype: Bool
                   }
 
 type Msg
     = ResultsData ( Result Http.Error APIResult )
+    | Showmember
 
 decodeAPIResult : D.Decoder APIResult
 decodeAPIResult =
     let
-        bAPIResultOK a h n s t = APIResultOK { aa = a, habitat = h, nuc = n, seqid = s, tax=t }
+        bAPIResultOK a h n s t = APIResultOK { aa = a, habitat = h, nuc = n, seqid = s, tax=t, showtype=False}
     in D.map5 bAPIResultOK
         (D.field "aminoacid" D.string)
         (D.field "habitat" D.string)
         (D.field "nucleotide" D.string)
         (D.field "seq_id" D.string)
         (D.field "taxonomy" D.string)
+
 
 initialState : String -> (Model, Cmd Msg)
 initialState seq_id =
@@ -66,7 +70,18 @@ initialState seq_id =
 
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
-    case msg of
+    let
+        ifQuery f =
+          case model of
+            Loaded v ->
+                let
+                    (qmpost, c) = f v
+                in (Loaded qmpost, c)   
+            Loading -> 
+                (Loading,Cmd.none) 
+            LoadError _ -> 
+                (LoadError "",Cmd.none) 
+    in case msg of
         ResultsData r -> case r of
             Ok (APIResultOK v) -> ( Loaded v, Cmd.none )
             Ok (APIError e) -> ( LoadError e, Cmd.none )
@@ -76,7 +91,11 @@ update msg model =
                 Http.NetworkError -> (LoadError ("Network error!") , Cmd.none)
                 Http.BadStatus s -> (LoadError (("Bad status: " ++ String.fromInt s)) , Cmd.none)
                 Http.BadBody s -> (LoadError (("Bad body: " ++ s)) , Cmd.none)
-                
+        Showmember -> 
+           ifQuery <| \qmodel ->
+            ( { qmodel | showtype = True }, Cmd.none )
+
+
 viewModel : Model -> Html Msg
 viewModel model =
     case model of
@@ -127,16 +146,21 @@ viewModel model =
                             ]
                         }
                   , title
-                  , members
-                  , page_select
+                  , if v.showtype
+                      then 
+                        members
+                    else 
+                      Html.text ""
+                  -- , page_select
                   ]
 
 -- main text
-title : Html msg
+title : Html Msg
 title = div [ id "cluster" ] 
                 [ h4 [id "cluster"] 
                        [ text  "This 90AA cluster contains the following 100AA smORFs:"]
-                , Button.button [ Button.info,Button.attrs [] ] [ text "Download .csv" ]
+                , Button.button [ Button.info, Button.onClick (Showmember)] [ text "Show" ]
+                , Button.button [ Button.light] [ text "Download .csv" ]
                 ]
 
 members : Html msg
@@ -176,7 +200,7 @@ members = Table.table
     }
 
 
-
+{-
 page_select : Html msg
 page_select = div [class "dropdown"]
                   [ p [class "number"] [ text "Total 1"]
@@ -195,3 +219,4 @@ page_select = div [class "dropdown"]
                        , li [] [a [href "#"] [text "»"]]
                        ]
                   ]
+-}
