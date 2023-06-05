@@ -197,7 +197,7 @@ search model =
                     , Input.text
                             [ Input.value model.idcontent
                             , Input.attrs
-                                [ placeholder "GMSC10.100AA_XXX_XXX_XXX   or   GMSC10.90AA_XXX_XXX_XXX" ]
+                                [ placeholder "GMSC10.100AA.XXX_XXX_XXX   or   GMSC10.90AA.XXX_XXX_XXX" ]
                             , Input.onInput SetIdentifier
                             ]
                     , Button.button [ Button.outlineSecondary, Button.attrs [ class "float-right"], Button.onClick SetIdentifierExample] [ text "Example" ]
@@ -291,7 +291,7 @@ fig model =
         |> Carousel.view model.carouselState
     ]
 identifierExample : String
-identifierExample = "GMSC10.100AA_000_000_000"
+identifierExample = "GMSC10.100AA.000_000_000"
 
 contigExample : String
 contigExample = """>scaffold1

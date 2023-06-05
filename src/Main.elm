@@ -26,11 +26,15 @@ import Bootstrap.Card.Block as Block
 import Shared
 import Home
 import Sequence
+import Cluster
+
+
 
 type Model =
     HomeModel Home.Model
     -- | IdentifierQuery IdentifierQuery.Model
     | SequenceModel Sequence.Model
+    | ClusterModel Cluster.Model
     -- | StaticPage StaticPage.Model
 
 type ChangePage
@@ -45,6 +49,7 @@ type Msg
     = HomeMsg Home.Msg
     -- | IdentifierQueryMsg IdentifierQuery.Msg
     | SequenceMsg Sequence.Msg
+    | ClusterMsg Cluster.Msg
     -- | StaticPageMsg StaticPage.Msg
     | GlobalMsg ChangePage
 
@@ -54,13 +59,6 @@ subscriptions : Model -> Sub Msg
 subscriptions model = Sub.none
 
 -- INIT
-
-myOptions =
-    { defaultStateOptions
-        | interval = Nothing
-        , pauseOnHover = False
-    }
-
 init : flags -> ( Model, Cmd Msg )
 init _ =
     ( HomeModel Home.initialModel
@@ -74,9 +72,15 @@ update msg model = case msg of
     GlobalMsg _ -> ( model, Cmd.none )
     HomeMsg Home.SubmitIdentifier -> case model of
         HomeModel (Home.IdentifierQuery hm) ->
-            let
-                (sm, cmd) = Sequence.initialState hm.idcontent
-            in ( SequenceModel sm, Cmd.map SequenceMsg cmd )
+            if String.startsWith "GMSC10.100AA" hm.idcontent
+              then
+                let
+                  (sm, cmd) = Sequence.initialState hm.idcontent
+                in ( SequenceModel sm, Cmd.map SequenceMsg cmd )
+            else  
+                let
+                  (sm, cmd) = Cluster.initialState hm.idcontent
+                in ( ClusterModel sm, Cmd.map ClusterMsg cmd )
         _ -> ( model, Cmd.none )
     HomeMsg m -> case model of
         HomeModel hm ->
@@ -91,6 +95,13 @@ update msg model = case msg of
                 (nqm, cmd) = Sequence.update m sm
             in
                 ( SequenceModel nqm, Cmd.map SequenceMsg cmd )
+        _ -> ( model, Cmd.none )
+    ClusterMsg m -> case model of
+        ClusterModel sm ->
+            let
+                (nqm, cmd) = Cluster.update m sm
+            in
+                ( ClusterModel nqm, Cmd.map ClusterMsg cmd )
         _ -> ( model, Cmd.none )
     {-
     SequenceQueryMsg m -> case model of
@@ -150,5 +161,8 @@ viewModel model = case model of
     SequenceModel m ->
         Sequence.viewModel m
             |> Html.map SequenceMsg
+    ClusterModel m ->
+        Cluster.viewModel m
+            |> Html.map ClusterMsg            
     --StaticPageModel m -> StaticPage.view m
 

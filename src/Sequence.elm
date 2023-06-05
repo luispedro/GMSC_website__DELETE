@@ -3,7 +3,6 @@ module Sequence exposing (Model(..), Msg(..), initialState, update, viewModel)
 import Html
 import Html exposing (..)
 import Html.Events exposing (..)
-
 import Html.Attributes as HtmlAttr
 import Html.Attributes exposing (..)
 import Browser
