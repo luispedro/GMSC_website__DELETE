@@ -1,5 +1,6 @@
-module Sequence exposing (main)
+module Sequence exposing (Model(..), Msg(..), initialState, update, viewModel)
 
+import Html
 import Html exposing (..)
 import Html.Events exposing (..)
 
@@ -9,7 +10,6 @@ import Browser
 import Dict
 import Markdown
 import Http
-import String.Extra
 
 import Bootstrap.CDN as CDN
 import Bootstrap.Grid as Grid
@@ -20,7 +20,7 @@ import Bootstrap.Table as Table
 import Json.Decode as D
 
 import View exposing (View)
-import Shared exposing (..)
+import Shared
 
 type Model =
     Loading
@@ -29,7 +29,7 @@ type Model =
              , habitat: String
              , nuc: String
              , seqid: String
-             , tax: String 
+             , tax: String
              }
 
 type APIResult =
@@ -38,9 +38,9 @@ type APIResult =
                   , habitat: String
                   , nuc: String
                   , seqid: String
-                  , tax: String 
+                  , tax: String
                   }
- 
+
 type Msg
     = ResultsData ( Result Http.Error APIResult )
 
@@ -56,11 +56,11 @@ decodeAPIResult =
         (D.field "seq_id" D.string)
         (D.field "taxonomy" D.string)
 
-init : flags -> (Model, Cmd Msg)
-init _ =
+initialState : String -> (Model, Cmd Msg)
+initialState seq_id =
     ( Loading
     , Http.get
-    { url = "http://127.0.0.1:5001/v1/seq-info/GMSC10.100AA.287_924_202"
+    { url = ("http://127.0.0.1:5001/v1/seq-info/" ++ seq_id)
     , expect = Http.expectJson ResultsData decodeAPIResult
     }
     )
@@ -78,46 +78,8 @@ update msg model =
                 Http.BadStatus s -> (LoadError (("Bad status: " ++ String.fromInt s)) , Cmd.none)
                 Http.BadBody s -> (LoadError (("Bad body: " ++ s)) , Cmd.none)
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch [ ]
 
-main: Program () Model Msg
-main =
-    Browser.document
-    { init = init
-    , update = update
-    , subscriptions = subscriptions
-    , view = view
-    }
-
-view : Model -> Browser.Document Msg
-view model =
-    { title = "Sequence"
-    , body =
-        [ CDN.stylesheet
-        , CDN.fontAwesome
-        , Html.node "link"
-                [ HtmlAttr.rel "stylesheet"
-                , HtmlAttr.href "style.css"
-                ]
-                []
-        , Grid.containerFluid []
-            [ Grid.simpleRow
-                [ Grid.col []
-                    [ Shared.header
-                    , viewModel model
-                    , Html.hr [] []
-                    , Shared.footer
-                    ]
-                ]
-            ]
-        ]
-    }
-
--- main text
-
-viewModel : Model-> Html Msg
+viewModel : Model-> Html.Html Msg
 viewModel model =
     case model of
         Loading ->

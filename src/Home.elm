@@ -1,4 +1,4 @@
-module Home exposing (..)
+module Home exposing (Model(..), Msg(..), initialModel, update, viewModel)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr
 import Html.Attributes exposing (..)
@@ -34,17 +34,19 @@ type alias IdentifierQueryModel =
     , carouselState : Carousel.State
     }
 
-        
+
 type Model =
         IdentifierQuery IdentifierQueryModel
 
 type Msg
     = SelectOp OperationType
     | SetIdentifierExample
+    | SetIdentifier String
     | SetSeqExample
     | ClearId
     | ClearSeq
     | CarouselMsg Carousel.Msg
+    | SubmitIdentifier
 
 -- SUBSCRIPTIONS
 
@@ -54,38 +56,34 @@ subscriptions model =
         IdentifierQuery qm ->
             Carousel.subscriptions qm.carouselState CarouselMsg
 
--- INIT
-
 myOptions =
     { defaultStateOptions
         | interval = Nothing
         , pauseOnHover = False
     }
 
-init : flags -> ( Model, Cmd Msg )
-init _ =
-    ( IdentifierQuery 
+initialModel :  Model
+initialModel =
+    IdentifierQuery
         { optype = Nothing
-        , idcontent = "" 
+        , idcontent = ""
         , seqcontent = ""
         , carouselState = Carousel.initialStateWithOptions myOptions
         }
-    , Cmd.none
-    )
 
 -- UPDATE
 
 update : Msg -> Model -> ( Model, Cmd Msg)
 update msg model =
     let
-        ifQuery f = 
+        ifQuery f =
           case model of
             IdentifierQuery qm ->
                 let
                     (qmpost, c) = f qm
                 in (IdentifierQuery qmpost, c)
     in case msg of
-        SelectOp p -> 
+        SelectOp p ->
           ifQuery <| \qmodel ->
                 -- If the example input is selected, switch it
                 if qmodel.optype == Just Contigs && qmodel.seqcontent == contigExample && p == Proteins then
@@ -94,12 +92,16 @@ update msg model =
                     ( { qmodel | optype = Just Contigs, seqcontent = "" }, Cmd.none )
                 else
                     ( { qmodel | optype = Just p, seqcontent = ""}, Cmd.none )
-        
+
         SetIdentifierExample ->
           ifQuery <| \qmodel ->
             ( { qmodel | idcontent = identifierExample }, Cmd.none )
 
-        SetSeqExample -> 
+        SetIdentifier id ->
+          ifQuery <| \qmodel ->
+            ( { qmodel | idcontent = id }, Cmd.none )
+
+        SetSeqExample ->
           ifQuery <| \qmodel ->
             let
               nc =
@@ -113,11 +115,11 @@ update msg model =
             in
               ( { qmodel | seqcontent = nc }, Cmd.none )
 
-        ClearId -> 
+        ClearId ->
           ifQuery <| \qmodel ->
             ( { qmodel | idcontent = "" }, Cmd.none )
 
-        ClearSeq -> 
+        ClearSeq ->
           ifQuery <| \qmodel ->
             ( { qmodel | seqcontent = "" }, Cmd.none )
 
@@ -125,51 +127,26 @@ update msg model =
           ifQuery <| \qmodel ->
             ({ qmodel | carouselState = Carousel.update subMsg qmodel.carouselState }, Cmd.none)
 
-main: Program () Model Msg
-main =
-    Browser.document
-    { init = init
-    , update = update
-    , subscriptions = subscriptions
-    , view = view
-    }
+        SubmitIdentifier -> (model, Cmd.none)
 
-view : Model -> Browser.Document Msg
-view model = { title = "GMSC:Home"
-        , body =
-            [ CDN.stylesheet
-            , CDN.fontAwesome
-            , Html.node "link"
-                [ HtmlAttr.rel "stylesheet"
-                , HtmlAttr.href "style.css"
-                ]
-                []
-            , Grid.containerFluid []
-                [ Grid.simpleRow
-                    [ Grid.col []
-                        [ Shared.header
-                        , intro
-                        , viewSearch model
-                        , viewFig model
-                        , Html.hr [] []
-                        , Shared.footer
-                        ]
-                    ]
-                ]
-            ]
-        }
-    
+viewModel : Model -> Html Msg
+viewModel model =
+    Html.div []
+        [ intro
+        , viewSearch model
+        , viewFig model
+        ]
 
 viewSearch : Model -> Html Msg
-viewSearch model = 
+viewSearch model =
   case model of
-    IdentifierQuery qm -> 
+    IdentifierQuery qm ->
       search qm
 
 viewFig : Model -> Html Msg
-viewFig model = 
+viewFig model =
   case model of
-    IdentifierQuery qm -> 
+    IdentifierQuery qm ->
       fig qm
 
 -- main text
@@ -185,7 +162,7 @@ The global microbial smORF catalogue (GMSC) is an integrated, consistently-proce
 A total of non-redundant 965 million 100AA ORFs were predicted from 63,410 metagenomes from global habitats and 87,920 high-quality isolated microbial genomes from the [ProGenomes](https://progenomes.embl.de/) database.
 The smORFs were clustered at 90% amino acid identity resulting in 288 million 90AA smORFs families.
 
-- The annotation of GMSC contains: 
+- The annotation of GMSC contains:
   - taxonomy classification
   - habitat assignment
   - quality assessment
@@ -194,7 +171,7 @@ The smORFs were clustered at 90% amino acid identity resulting in 288 million 90
 """ ]
 
 search : IdentifierQueryModel -> Html Msg
-search model = 
+search model =
   let
     buttonStyle who active =
             case active of
@@ -208,29 +185,39 @@ search model =
                     else
                         [ Button.outlineInfo, Button.onClick (SelectOp who) ]
   in div [class "search"]
-        [ Form.row [] 
+        [ Form.row []
             [ Form.col [ Col.sm10 ]
                 [ h4 [] [ text "Find homologues by sequence (GMSC-mapper) or search by identifier"]
                 ]
-            ]  
-        , Form.row [] 
+            ]
+        , Form.row []
             [ Form.col [ Col.sm10 ]
                 [ Form.group []
                     [ Form.label [] [ text "Identifier" ]
-                    , Input.text [ Input.value model.idcontent,Input.attrs [ placeholder "GMSC10.100AA_XXX_XXX_XXX   or   GMSC10.90AA_XXX_XXX_XXX" ] ]
+                    , Input.text
+                            [ Input.value model.idcontent
+                            , Input.attrs
+                                [ placeholder "GMSC10.100AA_XXX_XXX_XXX   or   GMSC10.90AA_XXX_XXX_XXX" ]
+                            , Input.onInput SetIdentifier
+                            ]
                     , Button.button [ Button.outlineSecondary, Button.attrs [ class "float-right"], Button.onClick SetIdentifierExample] [ text "Example" ]
-                    , Button.button[ Button.light, Button.attrs [ class "float-right"], Button.onClick ClearId] [ text "Clear" ]   
-                    , Button.button[ Button.info, Button.attrs [ class "float-right"]] [ text "Submit" ] 
-                    ]            
+                    , Button.button[ Button.light, Button.attrs [ class "float-right"], Button.onClick ClearId] [ text "Clear" ]
+                    , Button.button
+                            [ Button.info
+                            , Button.attrs [ class "float-right"]
+                            , Button.onClick SubmitIdentifier
+                            ]
+                            [ text "Submit" ]
+                    ]
                 ]
             ]
-        , Form.row [] 
+        , Form.row []
             [ Form.col [ Col.sm10 ]
                 [ h6 [] [ text "This webserver allows you to use GMSC-mapper for short jobs. For larger jobs, you can download and use the "
                         , a [href "https://github.com/BigDataBiology/GMSC-mapper"] [text "command line version of the tool."]]
                 ]
-            ] 
-        , Form.row [] 
+            ]
+        , Form.row []
             [ Form.col [ Col.sm10 ]
                 [ ButtonGroup.buttonGroup [ ButtonGroup.small ]
                     [ ButtonGroup.button (buttonStyle Contigs model.optype) [ text "Search from contigs" ]
@@ -238,7 +225,7 @@ search model =
                     ]
                 ]
             ]
-       , Form.row [] 
+       , Form.row []
             [ Form.col [ Col.sm10 ]
                 [ Form.group []
                     [ label [ for "myarea"] [ text "Input an amino acid / nucleotide sequence in FASTA format"]
@@ -256,15 +243,15 @@ search model =
                                 Textarea.attrs [ placeholder ">proteinID\n MTIISR..." ]
                         ]
                     , Button.button[ Button.outlineSecondary,Button.attrs [ class "float-right"], Button.onClick SetSeqExample] [ text "Example" ]
-                    , Button.button[ Button.light,Button.attrs [ class "float-right"], Button.onClick ClearSeq] [ text "Clear" ]   
-                    , Button.button[ Button.info,Button.attrs [ class "float-right"]] [ text "Submit" ]        
+                    , Button.button[ Button.light,Button.attrs [ class "float-right"], Button.onClick ClearSeq] [ text "Clear" ]
+                    , Button.button[ Button.info,Button.attrs [ class "float-right"]] [ text "Submit" ]
                     ]
                 ]
-            ]  
+            ]
         ]
 
 fig: IdentifierQueryModel -> Html Msg
-fig model = 
+fig model =
   div [class "fig"]
     [ Carousel.config CarouselMsg []
         |> Carousel.withControls
@@ -278,12 +265,12 @@ fig model =
                     , Card.attrs [ ]
                     , Card.align Text.alignSmCenter
                     ]
-                    |> Card.headerH4 [] 
+                    |> Card.headerH4 []
                         [ img [ src "assets/home_geo.svg" ] []
                         , p [] [text " Geographical distribution"]
                         ]
                     |> Card.view
-                )        
+                )
               )
             , Slide.config []
               (Slide.customContent
@@ -293,12 +280,12 @@ fig model =
                     , Card.attrs [ ]
                     , Card.align Text.alignSmCenter
                     ]
-                    |> Card.headerH4 [] 
+                    |> Card.headerH4 []
                         [ img [ src "assets/home_taxonomy.svg" ] []
                         , p [] [text " Taxonomy distribution"]
                         ]
                     |> Card.view
-                )        
+                )
               )
             ]
         |> Carousel.view model.carouselState
