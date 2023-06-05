@@ -19,7 +19,6 @@ import Bootstrap.Table as Table
 import Json.Decode as D
 
 import View exposing (View)
-import Shared
 
 type Model =
     Loading

@@ -23,7 +23,6 @@ import Bootstrap.Card as Card
 import Bootstrap.Text as Text
 import Bootstrap.Card.Block as Block
 
-import Shared exposing (..)
 
 type OperationType = Contigs | Proteins
 

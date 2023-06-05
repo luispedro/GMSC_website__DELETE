@@ -20,7 +20,6 @@ import Bootstrap.Dropdown as Dropdown
 import Json.Decode as D
 
 import View exposing (View)
-import Shared exposing (..)
 
 type Model =
     Loading

@@ -1,7 +1,9 @@
 module Main exposing (main)
 
 import Html exposing (..)
+import Html.Attributes exposing(..)
 import Html.Attributes as HtmlAttr
+import Html.Events exposing (..)
 import Browser
 import Dict
 import Markdown
@@ -23,35 +25,37 @@ import Bootstrap.Card as Card
 import Bootstrap.Text as Text
 import Bootstrap.Card.Block as Block
 
-import Shared
 import Home
 import Sequence
 import Cluster
-
-
+import Download
 
 type Model =
     HomeModel Home.Model
-    -- | IdentifierQuery IdentifierQuery.Model
     | SequenceModel Sequence.Model
     | ClusterModel Cluster.Model
-    -- | StaticPage StaticPage.Model
+    -- | BrowseModel
+    | DownloadModel 
+    -- | HelpModel
+    -- | AboutModel
 
-type ChangePage
+{-type ChangePage
     = GoToHome
     | GoToBrowse
     | GoToDownloads
     | GoToHelp
     | GoToAbout
-    -- | StaticPage
-
+-}
 type Msg
     = HomeMsg Home.Msg
-    -- | IdentifierQueryMsg IdentifierQuery.Msg
     | SequenceMsg Sequence.Msg
     | ClusterMsg Cluster.Msg
-    -- | StaticPageMsg StaticPage.Msg
-    | GlobalMsg ChangePage
+    -- | GlobalMsg ChangePage
+    -- | GoToHome
+    -- | GoToBrowse
+    | GoToDownload
+    -- | GoToHelp
+    -- | GoToAbout
 
 -- SUBSCRIPTIONS
 
@@ -69,7 +73,8 @@ init _ =
 
 update : Msg -> Model -> ( Model, Cmd Msg)
 update msg model = case msg of
-    GlobalMsg _ -> ( model, Cmd.none )
+    -- GlobalMsg _ -> ( model, Cmd.none )
+
     HomeMsg Home.SubmitIdentifier -> case model of
         HomeModel (Home.IdentifierQuery hm) ->
             if String.startsWith "GMSC10.100AA" hm.idcontent
@@ -82,6 +87,22 @@ update msg model = case msg of
                   (sm, cmd) = Cluster.initialState hm.idcontent
                 in ( ClusterModel sm, Cmd.map ClusterMsg cmd )
         _ -> ( model, Cmd.none )
+
+    {- GoToHome ->
+        ( HomeModel, Cmd.none )
+
+    GoToBrowse ->
+        ( BrowseModel, Cmd.none )
+    -}
+    GoToDownload ->
+        ( DownloadModel, Cmd.none )
+    {-
+    GoToHelp ->
+        ( HelpModel, Cmd.none )
+
+    GoToAbout ->
+        ( AboutModel, Cmd.none )   
+    -}
     HomeMsg m -> case model of
         HomeModel hm ->
             let
@@ -89,6 +110,7 @@ update msg model = case msg of
             in
                 ( HomeModel nhm, Cmd.map HomeMsg cmd )
         _ -> ( model, Cmd.none )
+
     SequenceMsg m -> case model of
         SequenceModel sm ->
             let
@@ -96,6 +118,7 @@ update msg model = case msg of
             in
                 ( SequenceModel nqm, Cmd.map SequenceMsg cmd )
         _ -> ( model, Cmd.none )
+
     ClusterMsg m -> case model of
         ClusterModel sm ->
             let
@@ -103,14 +126,8 @@ update msg model = case msg of
             in
                 ( ClusterModel nqm, Cmd.map ClusterMsg cmd )
         _ -> ( model, Cmd.none )
+
     {-
-    SequenceQueryMsg m -> case model of
-        SequenceQuery qm ->
-            let
-                (nqm, cmd) = SequenceQuery.update m qm
-            in
-                ( SequenceQuery nqm, Cmd.map SequenceQueryMsg cmd )
-        _ -> ( model, Cmd.none )
     StaticPageMsg m -> case model of
         StaticPage spm ->
             let
@@ -142,10 +159,10 @@ view model = { title = "GMSC:Home"
             , Grid.containerFluid []
                 [ Grid.simpleRow
                     [ Grid.col []
-                        [ Shared.header
+                        [ header
                         , viewModel model
                         , Html.hr [] []
-                        , Shared.footer
+                        , footer
                         ]
                     ]
                 ]
@@ -157,12 +174,43 @@ viewModel model = case model of
     HomeModel m ->
         Home.viewModel m
             |> Html.map HomeMsg
-    --IdentifierQueryModel m -> IdentifierQuery.view m
     SequenceModel m ->
         Sequence.viewModel m
             |> Html.map SequenceMsg
     ClusterModel m ->
         Cluster.viewModel m
-            |> Html.map ClusterMsg            
+            |> Html.map ClusterMsg       
+    -- BrowseModel ->
+    --     Download.viewModel 
+    DownloadModel ->
+        Download.viewModel 
+    {- HelpModel ->
+        Help.viewModel 
+    AboutModel ->
+        About.viewModel -}
     --StaticPageModel m -> StaticPage.view m
+
+-- header
+
+
+header : Html Msg
+header =
+    div [id "topbar"]
+        [Grid.simpleRow
+            [ Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Home"]] 
+            , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Browse"]] 
+            , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Downloads"]]
+            , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Help"]]
+            , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "About&Contact"]]
+            ]
+        ]
+
+-- FOOTER
+
+
+footer : Html Msg
+footer =
+  div [id "footerbar"]
+      [ a [][ text "Copyright (c) 2023 GMSC authors. All rights reserved."]
+      ]
 
