@@ -1,4 +1,4 @@
-module Filter exposing (main)
+module Filter exposing (Model(..), Msg(..), initialState, update, viewModel)
 
 import Html exposing (..)
 import Html.Events exposing (..)
@@ -64,7 +64,7 @@ decodeAPIResult =
 
 
 
-init : flags -> (Model, Cmd Msg)
+{-init : flags -> (Model, Cmd Msg)
 init myFlags =
     ( Loading
     , Http.post
@@ -77,6 +77,21 @@ init myFlags =
     , expect = Http.expectJson ResultsData decodeAPIResult
     }
     )
+-}
+initialState : String -> String -> (Model, Cmd Msg)
+initialState habitat taxonomy=
+    ( Loading
+    , Http.post
+    { url = "http://127.0.0.1:5001/v1/seq-filter/"
+    , body = Http.multipartBody
+                [ Http.stringPart "habitat" habitat
+                , Http.stringPart "taxonomy" taxonomy
+                , Http.stringPart "hq_only" "True"
+                ]
+    , expect = Http.expectJson ResultsData decodeAPIResult
+    }
+    )
+
 
 update : Msg -> Model -> ( Model, Cmd msg )
 update msg model =
@@ -90,7 +105,7 @@ update msg model =
                 Http.BadStatus s -> (LoadError (("Bad status: " ++ String.fromInt s)) , Cmd.none)
                 Http.BadBody s -> (LoadError (("Bad body: " ++ s)) , Cmd.none)
 
-subscriptions : Model -> Sub Msg
+{-subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch [ ]
 
@@ -119,7 +134,7 @@ view model =
             ]
         ]
     }
-
+-}
 
 viewModel : Model-> Html Msg
 viewModel model =
@@ -150,7 +165,7 @@ viewResults r  = case r of
                                     [ Table.td [] [ Html.text e.seqid ]
                                     ]) <|ok.results)
                     }
-        , text (String.fromInt (List.length ok.results))]
+        ]
     APIError err ->
         div []
             [ Html.p [] [ Html.text "Call to the GMSC server failed" ]
