@@ -31,22 +31,26 @@ import Cluster
 import Download
 import Help
 import About
+import Browse
+
+
 
 type Model =
     HomeModel Home.Model
     | SequenceModel Sequence.Model
     | ClusterModel Cluster.Model
-    -- | BrowseModel
+    | BrowseModel Browse.Model
     | DownloadModel 
     | HelpModel
     | AboutModel
 
 type Msg
     = HomeMsg Home.Msg
+    | BrowseMsg Browse.Msg
     | SequenceMsg Sequence.Msg
     | ClusterMsg Cluster.Msg
     | GoToHome
-    -- | GoToBrowse
+    | GoToBrowse
     | GoToDownload
     | GoToHelp
     | GoToAbout
@@ -67,8 +71,6 @@ init _ =
 
 update : Msg -> Model -> ( Model, Cmd Msg)
 update msg model = case msg of
-    -- GlobalMsg _ -> ( model, Cmd.none )
-
     HomeMsg Home.SubmitIdentifier -> case model of
         HomeModel (Home.IdentifierQuery hm) ->
             if String.startsWith "GMSC10.100AA" hm.idcontent
@@ -85,14 +87,15 @@ update msg model = case msg of
     GoToHome ->
         ( HomeModel Home.initialModel, Cmd.none )
 
-    {- GoToBrowse ->
-        ( BrowseModel, Cmd.none )
-    -}
+    GoToBrowse ->
+        ( BrowseModel Browse.initialModel, Cmd.none )
+    
     GoToDownload ->
         ( DownloadModel, Cmd.none )
 
     GoToHelp ->
         ( HelpModel, Cmd.none )
+
     GoToAbout ->
         ( AboutModel, Cmd.none )   
 
@@ -102,6 +105,14 @@ update msg model = case msg of
                 (nhm, cmd) = Home.update m hm
             in
                 ( HomeModel nhm, Cmd.map HomeMsg cmd )
+        _ -> ( model, Cmd.none )
+    
+    BrowseMsg m -> case model of
+        BrowseModel bm ->
+            let
+                (nbm, cmd) = Browse.update m bm
+            in
+                ( BrowseModel nbm, Cmd.map BrowseMsg cmd )
         _ -> ( model, Cmd.none )
 
     SequenceMsg m -> case model of
@@ -119,16 +130,6 @@ update msg model = case msg of
             in
                 ( ClusterModel nqm, Cmd.map ClusterMsg cmd )
         _ -> ( model, Cmd.none )
-
-    {-
-    StaticPageMsg m -> case model of
-        StaticPage spm ->
-            let
-                (nspm, cmd) = StaticPage.update m spm
-            in
-                ( StaticPage nspm, Cmd.map StaticPageMsg cmd )
-        _ -> ( model, Cmd.none )
-    -}
 
 main: Program () Model Msg
 main =
@@ -173,15 +174,15 @@ viewModel model = case model of
     ClusterModel m ->
         Cluster.viewModel m
             |> Html.map ClusterMsg       
-    -- BrowseModel ->
-    --     Download.viewModel 
+    BrowseModel m ->
+        Browse.viewModel m
+            |> Html.map BrowseMsg     
     DownloadModel ->
         Download.viewModel 
     HelpModel ->
         Help.viewModel 
     AboutModel ->
         About.viewModel
-    --StaticPageModel m -> StaticPage.view m
 
 -- header
 
@@ -191,7 +192,7 @@ header =
     div [id "topbar"]
         [Grid.simpleRow
             [ Grid.col [] [ Html.a [href "#", onClick GoToHome] [Html.text "Home"]] 
-            , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Browse"]] 
+            , Grid.col [] [ Html.a [href "#", onClick GoToBrowse] [Html.text "Browse"]] 
             , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Downloads"]]
             , Grid.col [] [ Html.a [href "#", onClick GoToHelp] [Html.text "Help"]]
             , Grid.col [] [ Html.a [href "#", onClick GoToAbout] [Html.text "About&Contact"]]

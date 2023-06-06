@@ -1,4 +1,5 @@
-module Browse exposing (..)
+module Browse exposing (Model(..), Msg(..), initialModel, update, viewModel)
+
 import Html exposing (..)
 import Html.Attributes as HtmlAttr
 import Html.Attributes exposing (..)
@@ -46,17 +47,16 @@ type Msg
     | MyDrop1Msg Dropdown.State
     | MyDrop2Msg Dropdown.State    
 
-init : flags -> ( Model, Cmd Msg )
-init _ =
-    ( Select 
+initialModel : Model
+initialModel =
+    Select 
         { habitat = ""
         , taxonomy = ""
         , hq = True
         , myDrop1State = Dropdown.initialState
         , myDrop2State = Dropdown.initialState
         }
-    , Cmd.none
-    )
+
 
 update : Msg -> Model -> ( Model, Cmd Msg)
 update msg model =
@@ -119,39 +119,12 @@ subscriptions model =
         FilterModel m ->
            Sub.batch [ ]
 
-
-main: Program () Model Msg
-main =
-    Browser.document
-    { init = init
-    , update = update
-    , subscriptions = subscriptions
-    , view = view
-    }
-
-view : Model -> Browser.Document Msg
-view model = { title = "GMSC:Home"
-        , body =
-            [ CDN.stylesheet
-            , CDN.fontAwesome
-            , Html.node "link"
-                [ HtmlAttr.rel "stylesheet"
-                , HtmlAttr.href "style.css"
-                ]
-                []
-            , Grid.containerFluid []
-                [ Grid.simpleRow
-                    [ Grid.col []
-                        [ header
-                        , viewSearch model
-                        , viewModel model
-                        , Html.hr [] []
-                        , footer
-                        ]
-                    ]
-                ]
-            ]
-        }
+viewModel : Model -> Html Msg
+viewModel model =
+    Html.div []
+        [ viewSearch model
+        , viewResult model
+        ]
 
 viewSearch : Model -> Html Msg
 viewSearch model =
@@ -161,37 +134,6 @@ viewSearch model =
     FilterModel m ->
       Html.text ""
 
-{-main: Program () () Msg
-main =  
-    Browser.document
-    { init = \_ -> ((), Cmd.none)
-    , update = \_ _ -> ((), Cmd.none)
-    , subscriptions = \_ -> Sub.none
-    , view = \_ ->
-        { title = "GMSC:About"
-        , body = 
-            [ CDN.stylesheet
-            , CDN.fontAwesome
-            , Html.node "link"
-                [ HtmlAttr.rel "stylesheet"
-                , HtmlAttr.href "style.css"
-                ]
-                []
-            , Grid.containerFluid []
-                [ Grid.simpleRow
-                    [ Grid.col []
-                        [ header
-                        , search
-                        , Html.hr [] []
-                        , viewModel model
-                        , footer
-                        ]
-                    ]
-                ]
-            ]
-        }
-    }
--}
 search: SelectModel -> Html Msg
 search model = div []
         [ h5 [] [text "Browse by habitats and/or taxonomy"]
@@ -233,38 +175,13 @@ search model = div []
                     }
                 ]
             |> InputGroup.view 
-            
-
     , Button.button [ Button.light, Button.onClick Search] [ text "Search" ]
     ]
 
-
-
-viewModel : Model -> Html Msg
-viewModel model = case model of
+viewResult : Model -> Html Msg
+viewResult model = case model of
     FilterModel m ->
         Filter.viewModel m
             |> Html.map FilterMsg
     Select m -> 
         Html.text ""
-
-header : Html Msg
-header =
-    div [id "topbar"]
-        [Grid.simpleRow
-            [ Grid.col [] [ Html.a [href "#"] [Html.text "Home"]] 
-            , Grid.col [] [ Html.a [href "#"] [Html.text "Browse"]] 
-            , Grid.col [] [ Html.a [href "#"] [Html.text "Downloads"]]
-            , Grid.col [] [ Html.a [href "#"] [Html.text "Help"]]
-            , Grid.col [] [ Html.a [href "#"] [Html.text "About&Contact"]]
-            ]
-        ]
-
--- FOOTER
-
-
-footer : Html Msg
-footer =
-  div [id "footerbar"]
-      [ a [][ text "Copyright (c) 2023 GMSC authors. All rights reserved."]
-      ]
