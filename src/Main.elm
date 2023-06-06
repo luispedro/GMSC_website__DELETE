@@ -45,7 +45,7 @@ type Msg
     = HomeMsg Home.Msg
     | SequenceMsg Sequence.Msg
     | ClusterMsg Cluster.Msg
-    -- | GoToHome
+    | GoToHome
     -- | GoToBrowse
     | GoToDownload
     | GoToHelp
@@ -82,10 +82,10 @@ update msg model = case msg of
                 in ( ClusterModel sm, Cmd.map ClusterMsg cmd )
         _ -> ( model, Cmd.none )
 
-    {- GoToHome ->
-        ( HomeModel, Cmd.none )
+    GoToHome ->
+        ( HomeModel Home.initialModel, Cmd.none )
 
-    GoToBrowse ->
+    {- GoToBrowse ->
         ( BrowseModel, Cmd.none )
     -}
     GoToDownload ->
@@ -190,7 +190,7 @@ header : Html Msg
 header =
     div [id "topbar"]
         [Grid.simpleRow
-            [ Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Home"]] 
+            [ Grid.col [] [ Html.a [href "#", onClick GoToHome] [Html.text "Home"]] 
             , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Browse"]] 
             , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Downloads"]]
             , Grid.col [] [ Html.a [href "#", onClick GoToHelp] [Html.text "Help"]]
