@@ -1,4 +1,4 @@
-module Help exposing (..)
+module Help exposing (viewModel)
 import Html exposing (..)
 import Html.Attributes as HtmlAttr
 import Html.Attributes exposing (..)
@@ -12,39 +12,9 @@ import Bootstrap.Grid as Grid
 import Bootstrap.Grid.Col as Col
 import Bootstrap.Grid.Row as Row
 
-import Shared exposing (..)
-
-
-
-main: Program () () Never
-main =
-    Browser.document
-    { init = \_ -> ((), Cmd.none)
-    , update = \_ _ -> ((), Cmd.none)
-    , subscriptions = \_ -> Sub.none
-    , view = \_ ->
-        { title = "GMSC:Help"
-        , body =
-            [ CDN.stylesheet
-            , CDN.fontAwesome
-            , Html.node "link"
-                [ HtmlAttr.rel "stylesheet"
-                , HtmlAttr.href "style.css"
-                ]
-                []
-            , Grid.containerFluid []
-                [ Grid.simpleRow
-                    [ Grid.col []
-                        [ Shared.header
-                        , content
-                        , Html.hr [] []
-                        , Shared.footer
-                        ]
-                    ]
-                ]
-            ]
-        }
-    }
+viewModel : Html msg
+viewModel =
+    content
 
 content : Html msg
 content =

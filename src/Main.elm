@@ -29,6 +29,8 @@ import Home
 import Sequence
 import Cluster
 import Download
+import Help
+import About
 
 type Model =
     HomeModel Home.Model
@@ -36,26 +38,18 @@ type Model =
     | ClusterModel Cluster.Model
     -- | BrowseModel
     | DownloadModel 
-    -- | HelpModel
-    -- | AboutModel
+    | HelpModel
+    | AboutModel
 
-{-type ChangePage
-    = GoToHome
-    | GoToBrowse
-    | GoToDownloads
-    | GoToHelp
-    | GoToAbout
--}
 type Msg
     = HomeMsg Home.Msg
     | SequenceMsg Sequence.Msg
     | ClusterMsg Cluster.Msg
-    -- | GlobalMsg ChangePage
     -- | GoToHome
     -- | GoToBrowse
     | GoToDownload
-    -- | GoToHelp
-    -- | GoToAbout
+    | GoToHelp
+    | GoToAbout
 
 -- SUBSCRIPTIONS
 
@@ -96,13 +90,12 @@ update msg model = case msg of
     -}
     GoToDownload ->
         ( DownloadModel, Cmd.none )
-    {-
+
     GoToHelp ->
         ( HelpModel, Cmd.none )
-
     GoToAbout ->
         ( AboutModel, Cmd.none )   
-    -}
+
     HomeMsg m -> case model of
         HomeModel hm ->
             let
@@ -184,10 +177,10 @@ viewModel model = case model of
     --     Download.viewModel 
     DownloadModel ->
         Download.viewModel 
-    {- HelpModel ->
+    HelpModel ->
         Help.viewModel 
     AboutModel ->
-        About.viewModel -}
+        About.viewModel
     --StaticPageModel m -> StaticPage.view m
 
 -- header
@@ -200,8 +193,8 @@ header =
             [ Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Home"]] 
             , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Browse"]] 
             , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Downloads"]]
-            , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "Help"]]
-            , Grid.col [] [ Html.a [href "#", onClick GoToDownload] [Html.text "About&Contact"]]
+            , Grid.col [] [ Html.a [href "#", onClick GoToHelp] [Html.text "Help"]]
+            , Grid.col [] [ Html.a [href "#", onClick GoToAbout] [Html.text "About&Contact"]]
             ]
         ]
 
