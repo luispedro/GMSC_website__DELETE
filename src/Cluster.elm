@@ -20,6 +20,8 @@ import Bootstrap.Dropdown as Dropdown
 import Json.Decode as D
 
 import View exposing (View)
+import Test
+
 
 type Model =
     Loading
@@ -29,8 +31,8 @@ type Model =
              , nuc: String
              , seqid: String
              , tax: String
-             , showtype: Bool
              }
+    | TestModel Test.Model
 
 type APIResult =
     APIError String
@@ -39,17 +41,17 @@ type APIResult =
                   , nuc: String
                   , seqid: String
                   , tax: String
-                  , showtype: Bool
                   }
 
 type Msg
     = ResultsData ( Result Http.Error APIResult )
     | Showmember
+    | TestMsg Test.Msg
 
 decodeAPIResult : D.Decoder APIResult
 decodeAPIResult =
     let
-        bAPIResultOK a h n s t = APIResultOK { aa = a, habitat = h, nuc = n, seqid = s, tax=t, showtype=False}
+        bAPIResultOK a h n s t = APIResultOK { aa = a, habitat = h, nuc = n, seqid = s, tax=t}
     in D.map5 bAPIResultOK
         (D.field "aminoacid" D.string)
         (D.field "habitat" D.string)
@@ -67,7 +69,7 @@ initialState seq_id =
     }
     )
 
-update : Msg -> Model -> ( Model, Cmd msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
         ifQuery f =
@@ -80,6 +82,8 @@ update msg model =
                 (Loading,Cmd.none) 
             LoadError _ -> 
                 (LoadError "",Cmd.none) 
+            TestModel m ->
+                (model,Cmd.none)
     in case msg of
         ResultsData r -> case r of
             Ok (APIResultOK v) -> ( Loaded v, Cmd.none )
@@ -91,8 +95,29 @@ update msg model =
                 Http.BadStatus s -> (LoadError (("Bad status: " ++ String.fromInt s)) , Cmd.none)
                 Http.BadBody s -> (LoadError (("Bad body: " ++ s)) , Cmd.none)
         Showmember -> 
-           ifQuery <| \qmodel ->
-            ( { qmodel | showtype = True }, Cmd.none )
+            case model of
+              Loaded hm->
+                let
+                  (sm, cmd) = Test.initialState hm.seqid
+                in ( TestModel sm, Cmd.map TestMsg cmd )
+              Loading -> 
+                (Loading,Cmd.none) 
+              LoadError _ -> 
+                (LoadError "",Cmd.none) 
+              TestModel m ->
+                (model,Cmd.none)
+        TestMsg m -> case model of
+          TestModel tm ->
+            let
+                (nqm, cmd) = Test.update m tm
+            in
+                ( TestModel nqm, Cmd.map TestMsg cmd )
+          Loaded hm->
+                (model,Cmd.none)
+          Loading -> 
+                (Loading,Cmd.none) 
+          LoadError _ -> 
+                (LoadError "",Cmd.none) 
 
 
 viewModel : Model -> Html Msg
@@ -149,13 +174,11 @@ viewModel model =
                             ]
                         }
                   , title
-                  , if v.showtype
-                      then 
-                        members
-                    else 
-                      Html.text ""
+                  , viewMembers model]
                   -- , page_select
-                  ]
+        TestModel m ->
+            div [] [viewMembers model]
+                  
 
 -- main text
 title : Html Msg
@@ -165,7 +188,19 @@ title = div [ id "cluster" ]
                 , Button.button [ Button.info, Button.onClick (Showmember)] [ text "Show" ]
                 , Button.button [ Button.light] [ text "Download .csv" ]
                 ]
+viewMembers : Model -> Html Msg
+viewMembers model = case model of
+    TestModel m ->
+        Test.viewModel m
+            |> Html.map TestMsg
+    Loaded m -> 
+        Html.text ""
+    Loading -> 
+        Html.text ""
+    LoadError _ -> 
+        Html.text ""
 
+{-
 members : Html msg
 members = Table.table
     { options = [ Table.hover ]
@@ -203,7 +238,7 @@ members = Table.table
     }
 
 
-{-
+
 page_select : Html msg
 page_select = div [class "dropdown"]
                   [ p [class "number"] [ text "Total 1"]

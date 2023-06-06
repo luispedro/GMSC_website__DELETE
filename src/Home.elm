@@ -186,7 +186,7 @@ search model =
   in div [class "search"]
         [ Form.row []
             [ Form.col [ Col.sm10 ]
-                [ h4 [] [ text "Find homologues by sequence (GMSC-mapper) or search by identifier"]
+                [ h4 [] [ text "Search by identifier or find homologues by sequence (GMSC-mapper)"]
                 ]
             ]
         , Form.row []

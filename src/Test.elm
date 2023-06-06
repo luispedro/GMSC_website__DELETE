@@ -1,4 +1,4 @@
-module Filter exposing (Model(..), Msg(..), initialState, update, viewModel)
+module Test exposing (Model(..), Msg(..), initialState, update, viewModel)
 
 import Html exposing (..)
 import Html.Events exposing (..)
@@ -45,7 +45,7 @@ decodeSequenceResult =
         -- (D.field "taxonomy" D.string)
 
 type APIResult =
-        APIResultOK { results : List SequenceResult
+        APIResultOK { cluster : List SequenceResult
                     , status : String
                     }
         | APIError String
@@ -57,26 +57,60 @@ type Msg
 decodeAPIResult : D.Decoder APIResult
 decodeAPIResult =
     let
-        bAPIResultOK r s = APIResultOK { results = r, status = s }
+        bAPIResultOK r s = APIResultOK { cluster = r, status = s }
     in D.map2 bAPIResultOK
-        (D.field "results" (D.list decodeSequenceResult))
+        (D.field "cluster" (D.list decodeSequenceResult))
         (D.field "status" D.string)
 
-initialState : String -> String -> (Model, Cmd Msg)
-initialState habitat taxonomy=
+initialState : String -> (Model, Cmd Msg)
+initialState seq_id = 
+    ( Loading
+    , Http.get
+    { url = ("http://127.0.0.1:5001/v1/cluster-info/" ++ seq_id)
+    , expect = Http.expectJson ResultsData decodeAPIResult
+    }
+    )
+
+{-init : flags -> (Model, Cmd Msg)
+init myFlags =
+    ( Loading
+    , Http.get
+    { url = ("http://127.0.0.1:5001/v1/cluster-info/" ++ "GMSC10.90AA.280_000_100")
+    , expect = Http.expectJson ResultsData decodeAPIResult
+    }
+    )
+-}
+{-
+init : flags -> (Model, Cmd Msg)
+init myFlags =
     ( Loading
     , Http.post
     { url = "http://127.0.0.1:5001/v1/seq-filter/"
     , body = Http.multipartBody
-                [ Http.stringPart "habitat" habitat
-                , Http.stringPart "taxonomy" taxonomy
+                -- [ Http.stringPart "habitat" "activated sludge,anthropogenic,built environment,cat gut,cattle gut,cattle rumen,chicken gut,dog gut,human gut,human saliva,human skin,isolate,marine,mouse gut,pig gut,primate gut,rat gut,river associated,soil,wastewater,water associated"]
+                [ Http.stringPart "habitat" "soil"
                 , Http.stringPart "hq_only" "True"
                 ]
     , expect = Http.expectJson ResultsData decodeAPIResult
     }
     )
 
-update : Msg -> Model -> ( Model, Cmd msg )
+initialState : String -> (Model, Cmd Msg)
+initialState habitat =
+    ( Loading
+    , Http.post
+    { url = "http://127.0.0.1:5001/v1/seq-filter/"
+    , body = Http.multipartBody
+                [ Http.stringPart "habitat" "soil"
+                , Http.stringPart "taxonomy" ""
+                , Http.stringPart "hq_only" "True"
+                ]
+    , expect = Http.expectJson ResultsData decodeAPIResult
+    }
+    )
+-}
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ResultsData r -> case r of
@@ -87,6 +121,39 @@ update msg model =
                 Http.NetworkError -> (LoadError ("Network error!") , Cmd.none)
                 Http.BadStatus s -> (LoadError (("Bad status: " ++ String.fromInt s)) , Cmd.none)
                 Http.BadBody s -> (LoadError (("Bad body: " ++ s)) , Cmd.none)
+
+{-
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.batch [ ]
+
+
+main: Program () Model Msg
+main =
+    Browser.document
+    { init = init
+    , update = update
+    , subscriptions = subscriptions
+    , view = view
+    }
+
+view : Model -> Browser.Document Msg
+view model =
+    { title = "AMP Prediction"
+    , body =
+        [ CDN.stylesheet
+        , CDN.fontAwesome
+        , Grid.container []
+            [ Grid.simpleRow
+                [ Grid.col []
+                    [ 
+                     viewModel model
+                    ]
+                ]
+            ]
+        ]
+    }
+-}
 
 viewModel : Model-> Html Msg
 viewModel model =
@@ -109,13 +176,13 @@ viewResults r  = case r of
         [Table.table
                     { options = [ Table.striped, Table.hover ]
                     , thead =  Table.simpleThead
-                        [ Table.th [] [ Html.text "90AA accession" ]
+                        [ Table.th [] [ Html.text "100AA accession" ]
                         ]
                     , tbody = Table.tbody []
                             (List.map (\e ->
                                 Table.tr []
                                     [ Table.td [] [ Html.text e.seqid ]
-                                    ]) <|ok.results)
+                                    ]) <|ok.cluster)
                     }
         ]
     APIError err ->
