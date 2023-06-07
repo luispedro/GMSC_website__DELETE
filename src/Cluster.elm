@@ -20,7 +20,7 @@ import Bootstrap.Dropdown as Dropdown
 import Json.Decode as D
 
 import View exposing (View)
-import Test
+import Members
 
 
 type Model =
@@ -32,7 +32,7 @@ type Model =
              , seqid: String
              , tax: String
              }
-    | TestModel Test.Model
+    | MembersModel Members.Model
 
 type APIResult =
     APIError String
@@ -46,7 +46,7 @@ type APIResult =
 type Msg
     = ResultsData ( Result Http.Error APIResult )
     | Showmember
-    | TestMsg Test.Msg
+    | MembersMsg Members.Msg
 
 decodeAPIResult : D.Decoder APIResult
 decodeAPIResult =
@@ -82,7 +82,7 @@ update msg model =
                 (Loading,Cmd.none) 
             LoadError _ -> 
                 (LoadError "",Cmd.none) 
-            TestModel m ->
+            MembersModel m ->
                 (model,Cmd.none)
     in case msg of
         ResultsData r -> case r of
@@ -98,20 +98,20 @@ update msg model =
             case model of
               Loaded hm->
                 let
-                  (sm, cmd) = Test.initialState hm.seqid
-                in ( TestModel sm, Cmd.map TestMsg cmd )
+                  (sm, cmd) = Members.initialState hm.seqid
+                in ( MembersModel sm, Cmd.map MembersMsg cmd )
               Loading -> 
                 (Loading,Cmd.none) 
               LoadError _ -> 
                 (LoadError "",Cmd.none) 
-              TestModel m ->
+              MembersModel m ->
                 (model,Cmd.none)
-        TestMsg m -> case model of
-          TestModel tm ->
+        MembersMsg m -> case model of
+          MembersModel tm ->
             let
-                (nqm, cmd) = Test.update m tm
+                (nqm, cmd) = Members.update m tm
             in
-                ( TestModel nqm, Cmd.map TestMsg cmd )
+                ( MembersModel nqm, Cmd.map MembersMsg cmd )
           Loaded hm->
                 (model,Cmd.none)
           Loading -> 
@@ -176,7 +176,7 @@ viewModel model =
                   , title
                   , viewMembers model]
                   -- , page_select
-        TestModel m ->
+        MembersModel m ->
             div [] [viewMembers model]
                   
 
@@ -186,13 +186,13 @@ title = div [ id "cluster" ]
                 [ h4 [id "cluster"] 
                        [ text  "This 90AA cluster contains the following 100AA smORFs:"]
                 , Button.button [ Button.info, Button.onClick (Showmember)] [ text "Show" ]
-                , Button.button [ Button.light] [ text "Download .csv" ]
+                -- , Button.button [ Button.light] [ text "Download .csv" ]
                 ]
 viewMembers : Model -> Html Msg
 viewMembers model = case model of
-    TestModel m ->
-        Test.viewModel m
-            |> Html.map TestMsg
+    MembersModel m ->
+        Members.viewModel m
+            |> Html.map MembersMsg
     Loaded m -> 
         Html.text ""
     Loading -> 
@@ -200,45 +200,8 @@ viewMembers model = case model of
     LoadError _ -> 
         Html.text ""
 
+
 {-
-members : Html msg
-members = Table.table
-    { options = [ Table.hover ]
-    , thead =  Table.simpleThead
-        [ Table.th [] [ text "100AA smORF accession" ]
-        , Table.th [] [ text "Protein sequence" ]
-        , Table.th [] [ text "Taxonomy" ]
-        , Table.th [] [ text "Habitat" ]
-        , Table.th [] [ text "Quality" ]
-        ]
-    , tbody =
-        Table.tbody []
-            [ Table.tr []
-                [ Table.td [] [a [ href "https://guide.elm-lang.org" ] [text "GMSC10.100AA.000_000_001"]]
-                , Table.td [] [ text "MAAAAAAAAAAAAAAAAAAAAAAAAVAVAVAAAATAA" ]
-                , Table.td [] [ text "-" ]
-                , Table.td [] [ text "lake associated" ]
-                , Table.td [] [ text "High quality" ]
-                ]
-            , Table.tr []
-                [ Table.td [] [a [ href "https://guide.elm-lang.org" ] [text "GMSC10.100AA.000_000_002"]]
-                , Table.td [] [ text "MAAAAAAAAAAAAAAVAVAVAAAATAA" ]
-                , Table.td [] [ text "f__Streptosporangiaceae" ]
-                , Table.td [] [ text "lake associated" ]
-                , Table.td [] [ text "High quality" ]
-                ]
-            , Table.tr []
-                [ Table.td [] [a [ href "https://guide.elm-lang.org" ] [text "GMSC10.100AA.000_000_003"]]
-                , Table.td [] [ text "MAAAAAAAAAAAAAVAVAVAAA" ]
-                , Table.td [] [ text "-" ]
-                , Table.td [] [ text "soil" ]
-                , Table.td [] [ text "High quality" ]
-                ]
-            ]
-    }
-
-
-
 page_select : Html msg
 page_select = div [class "dropdown"]
                   [ p [class "number"] [ text "Total 1"]
