@@ -28,10 +28,11 @@ import Bootstrap.Card.Block as Block
 import Home
 import Sequence
 import Cluster
+import Mapper
+import Browse
 import Download
 import Help
 import About
-import Browse
 
 
 
@@ -39,6 +40,7 @@ type Model =
     HomeModel Home.Model
     | SequenceModel Sequence.Model
     | ClusterModel Cluster.Model
+    | MapperModel Mapper.Model
     | BrowseModel Browse.Model
     | DownloadModel 
     | HelpModel
@@ -46,9 +48,10 @@ type Model =
 
 type Msg
     = HomeMsg Home.Msg
-    | BrowseMsg Browse.Msg
     | SequenceMsg Sequence.Msg
     | ClusterMsg Cluster.Msg
+    | MapperMsg Mapper.Msg
+    | BrowseMsg Browse.Msg
     | GoToHome
     | GoToBrowse
     | GoToDownload
@@ -84,6 +87,13 @@ update msg model = case msg of
                 in ( ClusterModel sm, Cmd.map ClusterMsg cmd )
         _ -> ( model, Cmd.none )
 
+    HomeMsg Home.SubmitSequence -> case model of
+        HomeModel (Home.IdentifierQuery hm) ->
+            let
+                (mm, cmd) = Mapper.initialState hm.seqcontent
+            in ( MapperModel mm, Cmd.map MapperMsg cmd )
+        _ -> ( model, Cmd.none )
+
     GoToHome ->
         ( HomeModel Home.initialModel, Cmd.none )
 
@@ -106,14 +116,6 @@ update msg model = case msg of
             in
                 ( HomeModel nhm, Cmd.map HomeMsg cmd )
         _ -> ( model, Cmd.none )
-    
-    BrowseMsg m -> case model of
-        BrowseModel bm ->
-            let
-                (nbm, cmd) = Browse.update m bm
-            in
-                ( BrowseModel nbm, Cmd.map BrowseMsg cmd )
-        _ -> ( model, Cmd.none )
 
     SequenceMsg m -> case model of
         SequenceModel sm ->
@@ -130,6 +132,22 @@ update msg model = case msg of
             in
                 ( ClusterModel nqm, Cmd.map ClusterMsg cmd )
         _ -> ( model, Cmd.none )
+
+    MapperMsg m -> case model of
+        MapperModel sm ->
+            let
+                (nqm, cmd) = Mapper.update m sm
+            in
+                ( MapperModel nqm, Cmd.map MapperMsg cmd )
+        _ -> ( model, Cmd.none )
+
+    BrowseMsg m -> case model of
+        BrowseModel bm ->
+            let
+                (nbm, cmd) = Browse.update m bm
+            in
+                ( BrowseModel nbm, Cmd.map BrowseMsg cmd )
+        _ -> ( model, Cmd.none )    
 
 main: Program () Model Msg
 main =
@@ -173,7 +191,10 @@ viewModel model = case model of
             |> Html.map SequenceMsg
     ClusterModel m ->
         Cluster.viewModel m
-            |> Html.map ClusterMsg       
+            |> Html.map ClusterMsg
+    MapperModel m ->
+        Mapper.viewModel m
+            |> Html.map MapperMsg        
     BrowseModel m ->
         Browse.viewModel m
             |> Html.map BrowseMsg     

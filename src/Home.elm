@@ -41,11 +41,13 @@ type Msg
     = SelectOp OperationType
     | SetIdentifierExample
     | SetIdentifier String
+    | SetSequence String
     | SetSeqExample
     | ClearId
     | ClearSeq
     | CarouselMsg Carousel.Msg
     | SubmitIdentifier
+    | SubmitSequence
 
 -- SUBSCRIPTIONS
 
@@ -99,6 +101,10 @@ update msg model =
         SetIdentifier id ->
           ifQuery <| \qmodel ->
             ( { qmodel | idcontent = id }, Cmd.none )
+        
+        SetSequence s ->
+          ifQuery <| \qmodel ->
+            ( { qmodel | seqcontent = s }, Cmd.none )
 
         SetSeqExample ->
           ifQuery <| \qmodel ->
@@ -127,6 +133,7 @@ update msg model =
             ({ qmodel | carouselState = Carousel.update subMsg qmodel.carouselState }, Cmd.none)
 
         SubmitIdentifier -> (model, Cmd.none)
+        SubmitSequence -> (model, Cmd.none)
 
 viewModel : Model -> Html Msg
 viewModel model =
@@ -231,6 +238,7 @@ search model =
                     , Textarea.textarea
                         [ Textarea.id "myarea"
                         , Textarea.value model.seqcontent
+                        , Textarea.onInput SetSequence
                         , Textarea.rows 3
                         , case model.optype of
                             Nothing ->
@@ -243,7 +251,12 @@ search model =
                         ]
                     , Button.button[ Button.outlineSecondary,Button.attrs [ class "float-right"], Button.onClick SetSeqExample] [ text "Example" ]
                     , Button.button[ Button.light,Button.attrs [ class "float-right"], Button.onClick ClearSeq] [ text "Clear" ]
-                    , Button.button[ Button.info,Button.attrs [ class "float-right"]] [ text "Submit" ]
+                    , Button.button
+                            [ Button.info
+                            , Button.attrs [ class "float-right"]
+                            , Button.onClick SubmitSequence
+                            ] 
+                            [ text "Submit" ]
                     ]
                 ]
             ]
