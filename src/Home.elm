@@ -27,7 +27,7 @@ import Bootstrap.Card.Block as Block
 type OperationType = Contigs | Proteins
 
 type alias IdentifierQueryModel =
-    { optype : Maybe OperationType
+    { optype : OperationType
     , idcontent : String
     , seqcontent: String
     , carouselState : Carousel.State
@@ -66,7 +66,7 @@ myOptions =
 initialModel :  Model
 initialModel =
     IdentifierQuery
-        { optype = Nothing
+        { optype = Proteins
         , idcontent = ""
         , seqcontent = ""
         , carouselState = Carousel.initialStateWithOptions myOptions
@@ -87,12 +87,12 @@ update msg model =
         SelectOp p ->
           ifQuery <| \qmodel ->
                 -- If the example input is selected, switch it
-                if qmodel.optype == Just Contigs && qmodel.seqcontent == contigExample && p == Proteins then
-                    ( { qmodel | optype = Just Proteins, seqcontent = "" }, Cmd.none )
-                else if qmodel.optype == Just Proteins && qmodel.seqcontent == proteinExample && p == Contigs then
-                    ( { qmodel | optype = Just Contigs, seqcontent = "" }, Cmd.none )
+                if qmodel.optype == Contigs && qmodel.seqcontent == contigExample && p == Proteins then
+                    ( { qmodel | optype = Proteins, seqcontent = "" }, Cmd.none )
+                else if qmodel.optype == Proteins && qmodel.seqcontent == proteinExample && p == Contigs then
+                    ( { qmodel | optype = Contigs, seqcontent = "" }, Cmd.none )
                 else
-                    ( { qmodel | optype = Just p, seqcontent = ""}, Cmd.none )
+                    ( { qmodel | optype = p, seqcontent = ""}, Cmd.none )
 
         SetIdentifierExample ->
           ifQuery <| \qmodel ->
@@ -101,7 +101,7 @@ update msg model =
         SetIdentifier id ->
           ifQuery <| \qmodel ->
             ( { qmodel | idcontent = id }, Cmd.none )
-        
+
         SetSequence s ->
           ifQuery <| \qmodel ->
             ( { qmodel | seqcontent = s }, Cmd.none )
@@ -111,12 +111,8 @@ update msg model =
             let
               nc =
                 case qmodel.optype of
-                  Nothing -> -- When click example without selecting contig or protein
-                    "Please select contig or protein mode above."
-                  Just Contigs ->
-                    contigExample
-                  Just Proteins ->
-                    proteinExample
+                  Contigs -> contigExample
+                  Proteins -> proteinExample
             in
               ( { qmodel | seqcontent = nc }, Cmd.none )
 
@@ -180,16 +176,7 @@ search : IdentifierQueryModel -> Html Msg
 search model =
   let
     buttonStyle who active =
-            case active of
-                Nothing ->
-                    [ Button.outlineInfo, Button.onClick (SelectOp who) ]
-
-                Just p ->
-                    if who == p then
-                        [ Button.info, Button.onClick (SelectOp who) ]
-
-                    else
-                        [ Button.outlineInfo, Button.onClick (SelectOp who) ]
+                [ if who == active then Button.info else Button.outlineInfo, Button.onClick (SelectOp who) ]
   in div [class "search"]
         [ Form.row []
             [ Form.col [ Col.sm10 ]
@@ -240,14 +227,11 @@ search model =
                         , Textarea.value model.seqcontent
                         , Textarea.onInput SetSequence
                         , Textarea.rows 3
-                        , case model.optype of
-                            Nothing ->
-                              Textarea.attrs [ placeholder "" ]
-                            Just p ->
-                              if p == Contigs then
-                                Textarea.attrs [ placeholder ">contigID\n AATACTACATGTCA..." ]
-                              else
-                                Textarea.attrs [ placeholder ">proteinID\n MTIISR..." ]
+                        , Textarea.attrs [
+                            placeholder <| if model.optype == Contigs then
+                                     ">contigID\n AATACTACATGTCA..."
+                                  else
+                                     ">proteinID\n MTIISR..."]
                         ]
                     , Button.button[ Button.outlineSecondary,Button.attrs [ class "float-right"], Button.onClick SetSeqExample] [ text "Example" ]
                     , Button.button[ Button.light,Button.attrs [ class "float-right"], Button.onClick ClearSeq] [ text "Clear" ]
