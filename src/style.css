@@ -222,11 +222,16 @@ td p#title{
 td p#detail{
     color:#2d2c2c;
     font-family:arial;
-    max-width: 1000px;
+    max-width: 340px;
     position:relative;
     left:5px;
     word-wrap: break-word;
     word-break: normal;
+}
+div#member table
+{   
+    position:relative;
+    left:0px
 }
 h4#cluster{
     color: #158BB8;

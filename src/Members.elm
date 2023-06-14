@@ -21,31 +21,29 @@ import Json.Decode as D
 
 import Http
 
-type alias SequenceResult =
-    {seqid: String}
-
-    {-{ aa: String
-    , habitat: String
-    , nuc: String
+type alias SequenceResultFull =
+    { aa: Maybe String
+    , habitat: Maybe String
+    , nuc: Maybe String
     , seqid: String
-    , tax: String  }-}
+    , tax: Maybe String  }
 
 type Model =
     Loading
     | LoadError String
     | Results APIResult
 
-decodeSequenceResult : D.Decoder SequenceResult
+decodeSequenceResult : D.Decoder SequenceResultFull
 decodeSequenceResult = 
-    D.map SequenceResult
-        -- (D.field "aminoacid" D.string)
-        -- (D.field "habitat" D.string)
-        -- (D.field "nucleotide" D.string)
-        (D.field "seq_id" D.string)
-        -- (D.field "taxonomy" D.string)
+    D.map5 SequenceResultFull
+           (D.maybe (D.field "aminoacid" D.string))
+           (D.maybe (D.field "habitat" D.string))
+           (D.maybe (D.field "nucleotide" D.string))
+           ((D.field "seq_id" D.string))
+           (D.maybe (D.field "taxonomy" D.string))
 
 type APIResult =
-        APIResultOK { cluster : List SequenceResult
+        APIResultOK { cluster : List SequenceResultFull
                     , status : String
                     }
         | APIError String
@@ -99,18 +97,47 @@ viewModel model =
 
 
 viewResults r  = case r of
-    APIResultOK ok ->
-        div []
-        [Table.table
+    APIResultOK ok -> 
+        div [id "member"]
+        [  Table.table
                     { options = [ Table.striped, Table.hover ]
                     , thead =  Table.simpleThead
                         [ Table.th [] [ Html.text "100AA accession" ]
+                        , Table.th [] [ Html.text "Protein sequence" ]
+                        , Table.th [] [ Html.text "Nucleotide sequence" ]
+                        , Table.th [] [ Html.text "Habitat sequence" ]
+                        , Table.th [] [ Html.text "Taxonomy sequence" ]
                         ]
                     , tbody = Table.tbody []
                             (List.map (\e ->
-                                Table.tr []
-                                    [ Table.td [] [ Html.text e.seqid ]
-                                    ]) <|ok.cluster)
+                                case (e.aa, e.habitat) of 
+                                  (Just a, Just h) ->
+                                    case ( e.nuc, e.tax ) of 
+                                        (Just n, Just t) ->
+                                            Table.tr []
+                                            [  Table.td [] [ p [id "detail"] [text e.seqid] ]
+                                            ,  Table.td [] [ p [id "detail"] [text a ] ]
+                                            ,  Table.td [] [ p [id "detail"] [text n ] ]
+                                            ,  Table.td [] [ p [id "detail"] [text h ] ]
+                                            ,  Table.td [] [ p [id "detail"] [text t ] ]
+                                            ]
+                                        (_, _) ->
+                                            Table.tr []
+                                            [ Table.td [] [ p [id "detail"] [text e.seqid] ]
+                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                            ]
+                                  (_, _) ->
+                                    Table.tr []
+                                      [  Table.td [] [ p [id "detail"] [text e.seqid] ]
+                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                      ]
+                                    ) <|ok.cluster)
                     }
         ]
     APIError err ->
