@@ -99,7 +99,7 @@ viewModel model =
 viewResults r  = case r of
     APIResultOK ok -> 
         div [id "member"]
-        [  Table.table
+            [  Table.table
                     { options = [ Table.striped, Table.hover ]
                     , thead =  Table.simpleThead
                         [ Table.th [] [ Html.text "100AA accession" ]
