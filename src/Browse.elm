@@ -27,16 +27,14 @@ import Bootstrap.Card.Block as Block
 
 import Filter
 import Selects
-import Example
+import Selectshared
 import Shared
 import Selectitem
 
 type alias SelectModel =
-    { habitat : String
-    , taxonomy: String
-    , hq: Bool
-    , habitatSearch : Example.Model Selectitem.Habitat
-    , taxonomySearch : Example.Model Selectitem.Taxonomy
+    { hq: Bool
+    , habitatSearch : Selectshared.Model Selectitem.Habitat
+    , taxonomySearch : Selectshared.Model Selectitem.Taxonomy
     }
 
 type Model 
@@ -44,28 +42,24 @@ type Model
     | FilterModel Filter.Model
 
 type Msg 
-    = SetHabitat String
-    | SetTaxonomy String
-    | Search
+    = Search
     | FilterMsg Filter.Msg
-    | HabitatSearchMsg (Example.Msg Selectitem.Habitat)
-    | TaxonomySearchMsg (Example.Msg Selectitem.Taxonomy)
+    | HabitatSearchMsg (Selectshared.Msg Selectitem.Habitat)
+    | TaxonomySearchMsg (Selectshared.Msg Selectitem.Taxonomy)
     | NoOp
 
 initialModel : Model
 initialModel =
     Select 
-        { habitat = ""
-        , taxonomy = ""
-        , hq = True
-        , habitatSearch = Example.initialModel 
+        { hq = True
+        , habitatSearch = Selectshared.initialModel 
                                { id = "exampleEmptySearch"
                                , available = Selectitem.habitat
                                , itemToLabel = Selectitem.habitattoLabel
                                , selected = [ ]
                                , selectConfig = selectConfigHabitatSearch
                                }
-        , taxonomySearch = Example.initialModel 
+        , taxonomySearch = Selectshared.initialModel 
                                { id = "exampleEmptySearch"
                                , available = Selectitem.taxonomy
                                , itemToLabel = Selectitem.taxtoLabel
@@ -94,7 +88,7 @@ update msg model =
             ifQuery <| \qmodel ->
               let
                 ( subModel, subCmd ) =
-                    Example.update
+                    Selectshared.update
                         sub
                         qmodel.habitatSearch
               in
@@ -106,26 +100,18 @@ update msg model =
             ifQuery <| \qmodel ->
               let
                 ( subModel, subCmd ) =
-                    Example.update
+                    Selectshared.update
                         sub
                         qmodel.taxonomySearch
               in
                 ( { qmodel | taxonomySearch = subModel }
                 , Cmd.map TaxonomySearchMsg subCmd
             )
-
-        SetHabitat h ->
-          ifQuery <| \qmodel ->
-              ( { qmodel | habitat = h }, Cmd.none )
-
-        SetTaxonomy t ->
-          ifQuery <| \qmodel ->
-              ( { qmodel | taxonomy = t }, Cmd.none )
               
         Search ->
           case model of
             Select hm ->
-                let (qhabitat,qtaxonomy) = ( (String.join "," <| List.map hm.habitatSearch.itemToLabel hm.habitatSearch.selected)
+                let (qhabitat,qtaxonomy) = ( (String.join "," <| List.sort (List.map hm.habitatSearch.itemToLabel hm.habitatSearch.selected))
                                            , (String.join "," <| List.map hm.taxonomySearch.itemToLabel hm.taxonomySearch.selected))
                 in
                   let
@@ -166,11 +152,11 @@ viewSearch model =
 search: SelectModel -> Html Msg
 search model = div []
         [ h5 [] [text "Browse by habitats and/or taxonomy"]
-        , Example.view
+        , Selectshared.view
             model.habitatSearch
             "Select habitats"
             |> Html.map HabitatSearchMsg
-        , Example.view
+        , Selectshared.view
             model.taxonomySearch
             "Select taxonomy"
             |> Html.map TaxonomySearchMsg
@@ -187,10 +173,10 @@ viewResult model = case model of
 
 selectConfigHabitatSearch =
     Selects.newConfig
-        { onSelect = Example.OnSelect
+        { onSelect = Selectshared.OnSelect
         , toLabel = .label
         , filter = Shared.filter 1 .label
-        , toMsg = Example.SelectMsg
+        , toMsg = Selectshared.SelectMsg
         }
         |> Selects.withCutoff 12
         |> Selects.withEmptySearch True
@@ -199,10 +185,10 @@ selectConfigHabitatSearch =
 
 selectConfigTaxonomySearch =
     Selects.newConfig
-        { onSelect = Example.OnSingleSelect
+        { onSelect = Selectshared.OnSingleSelect
         , toLabel = .label
         , filter = Shared.filter 1 .label
-        , toMsg = Example.SelectMsg
+        , toMsg = Selectshared.SelectMsg
         }
         |> Selects.withCutoff 12
         |> Selects.withEmptySearch True

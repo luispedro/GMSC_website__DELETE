@@ -1,4 +1,4 @@
-module Example exposing
+module Selectshared exposing
     ( Model
     , Msg(..)
     , update
@@ -82,7 +82,7 @@ view model prompt =
         currentSelection =
             p
                 []
-                [ text (String.join ", " <| List.map model.itemToLabel model.selected) ]
+                [ text (String.join ", " <| List.sort (List.map model.itemToLabel model.selected)) ]
 
         select =
             Selects.view
