@@ -245,74 +245,22 @@ div#cluster button{
     position:relative;
 }
 
-/*dropdown*/
-div.dropdown {
-    margin: 1em;
+/* browser page */
+label#browse{
+    color:#158BB8
 }
-p.number {
-    display:inline;
-    margin: 3em;
-}
-button.dropbtn{
-    border: solid 1px #0b445a;
-    background-color: #ffffff;
-    text-align: center;
-    display: inline-block;
-    margin: 4px 2px;
-    width: 70px;
-    cursor: pointer;
-}
-div.dropdown-content {
-    display: none;
-}
-div.dropdown-content p {
-    color: black;
-    text-align: center;
-    max-width: 70px;
-    position: relative;
-    left:145px
-}
-div.dropdown-content p:hover {
-    display: inline;
-    background-color: #f1f1f1;
-    max-width: 70px;
-}
-div.dropdown:hover{
-    display: inline;
-    max-width: 70px;  
-}
-div.dropdown:hover div.dropdown-content {
-    display: inline;
-    max-width: 70px;
-}
-/*page splited*/
-ul.pagination {
-    display: inline-block;
-    background-color: #ffffff;
-    position: relative;
-    left:600px
-}
-ul.pagination li {
-    display: inline;
-    background-color: #ffffff;
-}
-ul.pagination li a {
-    background-color: #ffffff;
-    color: black;
-    padding: 0px 16px;
-    text-decoration: none;
-}
-ul.pagination li a:hover:not(.active) {
-    background-color: #ddd;
+div.browse {
+    position:relative;
+    left:35px;
 }
 
-/* browser elm-select*/
+/* elm-select */
 .elm-select-input-wrapper {
     display: flex;
     position: relative;
     overflow: hidden;
-    background-color:white;
-    padding: 6px 8px;
+    background-color:#c4cdcf;
+    padding: 1px 1px;
   }
   
   .elm-select-input {
@@ -403,7 +351,7 @@ ul.pagination li a:hover:not(.active) {
     height: 2px;
     width: 0;
     position: absolute;
-    background: #03a9f4;
+    background: #158BB8;
     -webkit-transition: 0.2s ease all;
     -moz-transition: 0.2s ease all;
     -o-transition: 0.2s ease all;

@@ -96,7 +96,7 @@ view model prompt =
     in
     div []
         [ p []
-            [ label [] [ text prompt ]
+            [ label [id "browse"] [ text prompt ]
             ]
         , p []
             [ select

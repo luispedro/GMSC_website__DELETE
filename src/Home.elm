@@ -180,13 +180,13 @@ search model =
   in div [class "search"]
         [ Form.row []
             [ Form.col [ Col.sm10 ]
-                [ h4 [] [ text "Search by identifier or find homologues by sequence (GMSC-mapper)"]
+                [ h4 [] [ text "Search from identifier or find homologues by sequence (GMSC-mapper)"]
                 ]
             ]
         , Form.row []
             [ Form.col [ Col.sm10 ]
                 [ Form.group []
-                    [ Form.label [] [ text "Identifier" ]
+                    [ Form.label [id "browse"] [ text "Search from Identifier" ]
                     , Input.text
                             [ Input.value model.idcontent
                             , Input.attrs
@@ -206,22 +206,16 @@ search model =
             ]
         , Form.row []
             [ Form.col [ Col.sm10 ]
-                [ h6 [] [ text "This webserver allows you to use GMSC-mapper for short jobs. For larger jobs, you can download and use the "
-                        , a [href "https://github.com/BigDataBiology/GMSC-mapper"] [text "command line version of the tool."]]
-                ]
-            ]
-        , Form.row []
-            [ Form.col [ Col.sm10 ]
                 [ ButtonGroup.buttonGroup [ ButtonGroup.small ]
-                    [ ButtonGroup.button (buttonStyle Contigs model.optype) [ text "Search from contigs" ]
-                    , ButtonGroup.button (buttonStyle Proteins model.optype) [ text "Search from proteins" ]
+                    [ ButtonGroup.button (buttonStyle Proteins model.optype) [ text "Search from proteins" ]
+                    , ButtonGroup.button (buttonStyle Contigs model.optype) [ text "Search from contigs" ]
                     ]
                 ]
             ]
        , Form.row []
             [ Form.col [ Col.sm10 ]
                 [ Form.group []
-                    [ label [ for "myarea"] [ text "Input an amino acid / nucleotide sequence in FASTA format"]
+                    [ label [ id "browse"] [ text "Input an amino acid / nucleotide sequence in FASTA format"]
                     , Textarea.textarea
                         [ Textarea.id "myarea"
                         , Textarea.value model.seqcontent
@@ -242,6 +236,12 @@ search model =
                             ] 
                             [ text "Submit" ]
                     ]
+                ]
+            ]
+      , Form.row []
+            [ Form.col [ Col.sm10 ]
+                [ h6 [] [ text "This webserver allows you to use GMSC-mapper for short jobs. For larger jobs, you can download and use the "
+                        , a [href "https://github.com/BigDataBiology/GMSC-mapper"] [text "command line version of the tool."]]
                 ]
             ]
         ]

@@ -199,25 +199,3 @@ viewMembers model = case model of
         Html.text ""
     LoadError _ -> 
         Html.text ""
-
-
-{-
-page_select : Html msg
-page_select = div [class "dropdown"]
-                  [ p [class "number"] [ text "Total 1"]
-                  , button [class "dropbtn"] [text "5/Page"]
-                  , div [class "dropdown-content"] 
-                        [ p [] [text "10/Page"]
-                        , p [] [text "15/Page"]
-                        , p [] [text "20/Page"]]
-                  , ul [class "pagination"] 
-                       [ li [] [a [href "#"] [text "«"]]
-                       , li [] [a [href "#"] [text "1"]]
-                       , li [] [a [href "#"] [text "2"]]
-                       , li [] [a [href "#"] [text "3"]]
-                       , li [] [a [href "#"] [text "4"]]
-                       , li [] [a [href "#"] [text "5"]]
-                       , li [] [a [href "#"] [text "»"]]
-                       ]
-                  ]
--}
