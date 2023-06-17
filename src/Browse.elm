@@ -26,13 +26,17 @@ import Bootstrap.Text as Text
 import Bootstrap.Card.Block as Block
 
 import Filter
+import Selects
+import Example
+import Shared
+import Selectitem
 
 type alias SelectModel =
     { habitat : String
     , taxonomy: String
     , hq: Bool
-    , myDrop1State : Dropdown.State
-    , myDrop2State : Dropdown.State
+    , habitatSearch : Example.Model Selectitem.Habitat
+    , taxonomySearch : Example.Model Selectitem.Taxonomy
     }
 
 type Model 
@@ -44,8 +48,9 @@ type Msg
     | SetTaxonomy String
     | Search
     | FilterMsg Filter.Msg
-    | MyDrop1Msg Dropdown.State
-    | MyDrop2Msg Dropdown.State    
+    | HabitatSearchMsg (Example.Msg Selectitem.Habitat)
+    | TaxonomySearchMsg (Example.Msg Selectitem.Taxonomy)
+    | NoOp
 
 initialModel : Model
 initialModel =
@@ -53,8 +58,20 @@ initialModel =
         { habitat = ""
         , taxonomy = ""
         , hq = True
-        , myDrop1State = Dropdown.initialState
-        , myDrop2State = Dropdown.initialState
+        , habitatSearch = Example.initialModel 
+                               { id = "exampleEmptySearch"
+                               , available = Selectitem.habitat
+                               , itemToLabel = Selectitem.habitattoLabel
+                               , selected = [ ]
+                               , selectConfig = selectConfigHabitatSearch
+                               }
+        , taxonomySearch = Example.initialModel 
+                               { id = "exampleEmptySearch"
+                               , available = Selectitem.taxonomy
+                               , itemToLabel = Selectitem.taxtoLabel
+                               , selected = [ ]
+                               , selectConfig = selectConfigTaxonomySearch
+                               }
         }
 
 
@@ -70,16 +87,31 @@ update msg model =
             FilterModel m ->
                 (model,Cmd.none)
     in case msg of
-        MyDrop1Msg state ->
-          ifQuery <| \qmodel ->
-            ( { qmodel | myDrop1State = state }
-            , Cmd.none
+        NoOp ->
+            ( model, Cmd.none )
+
+        HabitatSearchMsg sub ->
+            ifQuery <| \qmodel ->
+              let
+                ( subModel, subCmd ) =
+                    Example.update
+                        sub
+                        qmodel.habitatSearch
+              in
+                ( { qmodel | habitatSearch = subModel }
+                , Cmd.map HabitatSearchMsg subCmd
             )
 
-        MyDrop2Msg state ->
-          ifQuery <| \qmodel ->
-            ( { qmodel | myDrop2State = state }
-            , Cmd.none
+        TaxonomySearchMsg sub ->
+            ifQuery <| \qmodel ->
+              let
+                ( subModel, subCmd ) =
+                    Example.update
+                        sub
+                        qmodel.taxonomySearch
+              in
+                ( { qmodel | taxonomySearch = subModel }
+                , Cmd.map TaxonomySearchMsg subCmd
             )
 
         SetHabitat h ->
@@ -92,10 +124,13 @@ update msg model =
               
         Search ->
           case model of
-            Select hm->
-                let
-                  (sm, cmd) = Filter.initialState hm.habitat hm.taxonomy
-                in ( FilterModel sm, Cmd.map FilterMsg cmd )
+            Select hm ->
+                let (qhabitat,qtaxonomy) = ( (String.join "," <| List.map hm.habitatSearch.itemToLabel hm.habitatSearch.selected)
+                                           , (String.join "," <| List.map hm.taxonomySearch.itemToLabel hm.taxonomySearch.selected))
+                in
+                  let
+                    (sm, cmd) = Filter.initialState qhabitat qtaxonomy
+                  in ( FilterModel sm, Cmd.map FilterMsg cmd )
             FilterModel m ->
                 (model,Cmd.none)
 
@@ -111,13 +146,7 @@ update msg model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    case model of
-        Select qm ->
-           Sub.batch
-                [ Dropdown.subscriptions qm.myDrop1State MyDrop1Msg 
-                , Dropdown.subscriptions qm.myDrop2State MyDrop2Msg ]
-        FilterModel m ->
-           Sub.batch [ ]
+    Sub.none
 
 viewModel : Model -> Html Msg
 viewModel model =
@@ -137,44 +166,14 @@ viewSearch model =
 search: SelectModel -> Html Msg
 search model = div []
         [ h5 [] [text "Browse by habitats and/or taxonomy"]
-        , InputGroup.config
-            ( InputGroup.text [ Input.value model.habitat
-                              , Input.placeholder "Search for"
-                              , Input.onInput SetHabitat 
-                              ] )
-            |> InputGroup.predecessors
-                [ InputGroup.dropdown
-                    model.myDrop1State
-                    { options = []
-                    , toggleMsg = MyDrop1Msg
-                    , toggleButton =
-                        Dropdown.toggle [ Button.outlineSecondary ] [ text "Habitats" ]
-                    , items =
-                        [ Dropdown.buttonItem [] [ text "Soil"]
-                        , Dropdown.buttonItem [] [ text "Marine"]
-                        ]
-                    }
-                ]
-            |> InputGroup.view
-        , InputGroup.config
-            ( InputGroup.text [ Input.value model.taxonomy
-                              , Input.placeholder "Search for"
-                              , Input.onInput SetTaxonomy
-                              ] )
-            |> InputGroup.predecessors
-                [ InputGroup.dropdown
-                    model.myDrop2State
-                    { options = []
-                    , toggleMsg = MyDrop2Msg
-                    , toggleButton =
-                        Dropdown.toggle [ Button.outlineSecondary ] [ text "Taxonomy" ]
-                    , items =
-                        [ Dropdown.buttonItem [] [ text "d__Bacteria"]
-                        , Dropdown.buttonItem [] [ text "d__Archaea"]
-                        ]
-                    }
-                ]
-            |> InputGroup.view 
+        , Example.view
+            model.habitatSearch
+            "Select habitats"
+            |> Html.map HabitatSearchMsg
+        , Example.view
+            model.taxonomySearch
+            "Select taxonomy"
+            |> Html.map TaxonomySearchMsg
     , Button.button [ Button.light, Button.onClick Search] [ text "Search" ]
     ]
 
@@ -185,3 +184,27 @@ viewResult model = case model of
             |> Html.map FilterMsg
     Select m -> 
         Html.text ""
+
+selectConfigHabitatSearch =
+    Selects.newConfig
+        { onSelect = Example.OnSelect
+        , toLabel = .label
+        , filter = Shared.filter 1 .label
+        , toMsg = Example.SelectMsg
+        }
+        |> Selects.withCutoff 12
+        |> Selects.withEmptySearch True
+        |> Selects.withNotFound "No matches"
+        |> Selects.withPrompt "Select habitats"
+
+selectConfigTaxonomySearch =
+    Selects.newConfig
+        { onSelect = Example.OnSingleSelect
+        , toLabel = .label
+        , filter = Shared.filter 1 .label
+        , toMsg = Example.SelectMsg
+        }
+        |> Selects.withCutoff 12
+        |> Selects.withEmptySearch True
+        |> Selects.withNotFound "No matches"
+        |> Selects.withPrompt "Select taxonomy"
