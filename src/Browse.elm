@@ -154,11 +154,11 @@ search model = div []
         [ h5 [] [text "Browse by habitats and/or taxonomy"]
         , Selectshared.view
             model.habitatSearch
-            "Select habitats"
+            "Habitats"
             |> Html.map HabitatSearchMsg
         , Selectshared.view
             model.taxonomySearch
-            "Select taxonomy"
+            "Taxonomy"
             |> Html.map TaxonomySearchMsg
     , Button.button [ Button.light, Button.onClick Search] [ text "Search" ]
     ]

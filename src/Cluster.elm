@@ -64,7 +64,7 @@ initialState : String -> (Model, Cmd Msg)
 initialState seq_id =
     ( Loading
     , Http.get
-    { url = ("http://127.0.0.1:5001/v1/seq-info/" ++ seq_id)
+    { url = ("https://gmsc-api.big-data-biology.org/v1/seq-info/" ++ seq_id)
     , expect = Http.expectJson ResultsData decodeAPIResult
     }
     )

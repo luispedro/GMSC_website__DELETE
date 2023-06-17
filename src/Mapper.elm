@@ -114,7 +114,7 @@ initialState : String -> (Model, Cmd Msg)
 initialState seq =
     ( Loading
     , Http.post
-    { url = "http://127.0.0.1:5000/internal/seq-search/"
+    { url = "https://gmsc-api.big-data-biology.org/internal/seq-search/"
     , body = Http.multipartBody
                 [ Http.stringPart "form" "sequence_faa=seq"
                 ]
@@ -130,7 +130,7 @@ update msg model =
             Ok v -> case v of 
                       APIResultOK ok ->
                         ( Results v
-                        , Http.get { url = ("http://127.0.0.1:5000/internal/seq-search/" ++ ok.search_id)
+                        , Http.get { url = ("https://gmsc-api.big-data-biology.org/internal/seq-search/" ++ ok.search_id)
                                    , expect = Http.expectJson SearchData decodeSearchResult
                                    }
                         )

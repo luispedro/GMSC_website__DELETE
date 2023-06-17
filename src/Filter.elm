@@ -64,7 +64,7 @@ initialState : String -> String -> (Model, Cmd Msg)
 initialState habitat taxonomy=
     ( Loading
     , Http.post
-    { url = "http://127.0.0.1:5001/v1/seq-filter/"
+    { url = "https://gmsc-api.big-data-biology.org/v1/seq-filter/"
     , body = Http.multipartBody
                 [ Http.stringPart "habitat" habitat
                 , Http.stringPart "taxonomy" taxonomy

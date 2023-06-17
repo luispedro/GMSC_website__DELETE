@@ -79,10 +79,13 @@ update msg model =
 view : Model item -> String -> Html (Msg item)
 view model prompt =
     let
-        currentSelection =
-            p
-                []
-                [ text (String.join ", " <| List.sort (List.map model.itemToLabel model.selected)) ]
+        currentSelection = 
+            if (List.length (model.selected)) > 0 then
+              p []
+                [ text ( "Selected: " ++ ( String.join ", " <| List.sort (List.map model.itemToLabel model.selected ))) 
+                ]
+            else
+              p [][ text ""  ]
 
         select =
             Selects.view
@@ -91,13 +94,11 @@ view model prompt =
                 model.available
                 model.selected
     in
-    div [ ]
-        [ p
-            []
+    div []
+        [ p []
             [ label [] [ text prompt ]
             ]
-        , p
-            []
+        , p []
             [ select
             ]
         , currentSelection
