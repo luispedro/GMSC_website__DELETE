@@ -81,7 +81,7 @@ view model prompt =
     let
         currentSelection = 
             if (List.length (model.selected)) > 0 then
-              p []
+              p [id "selected"]
                 [ text ( "Selected: " ++ ( String.join ", " <| List.sort (List.map model.itemToLabel model.selected ))) 
                 ]
             else

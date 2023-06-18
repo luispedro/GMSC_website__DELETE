@@ -151,7 +151,7 @@ viewSearch model =
 
 search: SelectModel -> Html Msg
 search model = div []
-        [ h5 [] [text "Browse by habitats and/or taxonomy"]
+        [ h5 [] [text "Browse by habitats and taxonomy"]
         , Selectshared.view
             model.habitatSearch
             "Browse by habitats"

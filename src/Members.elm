@@ -105,8 +105,8 @@ viewResults r  = case r of
                         [ Table.th [] [ Html.text "100AA accession" ]
                         , Table.th [] [ Html.text "Protein sequence" ]
                         , Table.th [] [ Html.text "Nucleotide sequence" ]
-                        , Table.th [] [ Html.text "Habitat sequence" ]
-                        , Table.th [] [ Html.text "Taxonomy sequence" ]
+                        , Table.th [] [ Html.text "Habitat" ]
+                        , Table.th [] [ Html.text "Taxonomy" ]
                         ]
                     , tbody = Table.tbody []
                             (List.map (\e ->

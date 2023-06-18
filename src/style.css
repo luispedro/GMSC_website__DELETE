@@ -247,13 +247,19 @@ div#cluster button{
 
 /* browser page */
 label#browse{
-    color:#158BB8
+    color:#158BB8;
+    font-weight: bold;
 }
 div.browse {
     position:relative;
     left:35px;
 }
-
+p#selected {
+  color:#126E82;
+  font-size:14px;
+  position:relative;
+  left:50px;
+}
 /* elm-select */
 .elm-select-input-wrapper {
     display: flex;

@@ -108,10 +108,10 @@ viewResults r  = case r of
                     { options = [ Table.striped, Table.hover ]
                     , thead =  Table.simpleThead
                         [ Table.th [] [ Html.text "90AA accession" ]
-                        , Table.th [] [ Html.text "Protein sequence" ]
-                        , Table.th [] [ Html.text "Nucleotide sequence" ]
-                        , Table.th [] [ Html.text "Habitat sequence" ]
-                        , Table.th [] [ Html.text "Taxonomy sequence" ]
+                        , Table.th [] [ Html.text "Consensus protein sequence" ]
+                        , Table.th [] [ Html.text "Consensus nucleotide sequence" ]
+                        , Table.th [] [ Html.text "Habitat" ]
+                        , Table.th [] [ Html.text "Taxonomy" ]
                         ]
                     , tbody = Table.tbody []
                             (List.map (\e ->
