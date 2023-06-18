@@ -178,7 +178,7 @@ selectConfigHabitatSearch =
         , filter = Shared.filter 1 .label
         , toMsg = Selectshared.SelectMsg
         }
-        |> Selects.withCutoff 12
+        -- |> Selects.withCutoff 12
         |> Selects.withEmptySearch True
         |> Selects.withNotFound "No matches"
         |> Selects.withPrompt "Select habitats"
@@ -190,7 +190,7 @@ selectConfigTaxonomySearch =
         , filter = Shared.filter 1 .label
         , toMsg = Selectshared.SelectMsg
         }
-        |> Selects.withCutoff 12
+        -- |> Selects.withCutoff 12
         |> Selects.withEmptySearch True
         |> Selects.withNotFound "No matches"
         |> Selects.withPrompt "Select taxonomy"

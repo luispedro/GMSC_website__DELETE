@@ -23,7 +23,7 @@ div#topbar a:hover {
   }
 
 /*footer*/
-div#footerbar a {
+div#footerbar p {
     color: #b4c0c3;
     text-align:center;
     padding: 14px 0px;

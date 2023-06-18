@@ -299,6 +299,6 @@ header =
 footer : Html Msg
 footer =
   div [id "footerbar"]
-      [ a [][ text "Copyright (c) 2023 GMSC authors. All rights reserved."]
+      [  p [] [text "Copyright (c) 2023 GMSC authors. All rights reserved."]
       ]
 
