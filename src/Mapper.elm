@@ -20,18 +20,18 @@ import Json.Decode as D
 
 import View exposing (View)
 
-type alias HitsResult = 
-    { e: Float
-    , id: String
-    , identity: Float
-    }
-
 type alias SequenceResult =
     { aa: String
     , habitat: String
     , hits: List HitsResult
     , quality: String
     , tax: String
+    }
+
+type alias HitsResult = 
+    { e: Float
+    , id: String
+    , identity: Float
     }
 
 type alias QueryResult =
@@ -109,14 +109,15 @@ type Model =
 type Msg
     = ResultsData (Result Http.Error APIResult)
     | SearchData (Result Http.Error SearchResult)
+    | Getresults String
 
 initialState : String -> (Model, Cmd Msg)
 initialState seq =
     ( Loading
     , Http.post
-    { url = "https://gmsc-api.big-data-biology.org/internal/seq-search/"
+    { url = "http://127.0.0.1:5000/internal/seq-search/"
     , body = Http.multipartBody
-                [ Http.stringPart "form" "sequence_faa=seq"
+                [ Http.stringPart "sequence_faa" seq
                 ]
     , expect = Http.expectJson ResultsData decodeAPIResult
     }
@@ -127,14 +128,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ResultsData r -> case r of
-            Ok v -> case v of 
-                      APIResultOK ok ->
-                        ( Results v
-                        , Http.get { url = ("https://gmsc-api.big-data-biology.org/internal/seq-search/" ++ ok.search_id)
-                                   , expect = Http.expectJson SearchData decodeSearchResult
-                                   }
-                        )
-                      APIError s -> (model,Cmd.none)                    
+            Ok v -> ( Results v, Cmd.none )                 
             Err err -> case err of
                 Http.BadUrl s -> (LoadError ("Bad URL: "++ s) , Cmd.none)
                 Http.Timeout  -> (LoadError ("Timeout") , Cmd.none)
@@ -143,14 +137,7 @@ update msg model =
                 Http.BadBody s -> (LoadError (("Bad body: " ++ s)) , Cmd.none)
 
         SearchData sd -> case sd of
-            Ok v -> ( Search v, Cmd.none )
-                    {- case v of 
-                      SearchResultOK ok ->
-                        if ok.status == "Done" then
-                           ( Search v, Cmd.none )
-                        else
-                           ( Loading, Cmd.none)
-                      SearchResultError s -> (model,Cmd.none)-}
+            Ok v ->  ( Search v, Cmd.none )
             Err err -> case err of
                 Http.BadUrl s -> (LoadError ("Bad URL: "++ s) , Cmd.none)
                 Http.Timeout  -> (LoadError ("Timeout") , Cmd.none)
@@ -158,6 +145,12 @@ update msg model =
                 Http.BadStatus s -> (LoadError (("Bad status: " ++ String.fromInt s)) , Cmd.none)
                 Http.BadBody s -> (LoadError (("Bad body: " ++ s)) , Cmd.none)
 
+        Getresults id ->
+                ( Loading
+                , Http.get { url = ("http://127.0.0.1:5000/internal/seq-search/" ++ id)
+                                   , expect = Http.expectJson SearchData decodeSearchResult
+                           }
+                )
 
 viewModel : Model-> Html Msg
 viewModel model =
@@ -178,6 +171,7 @@ viewResults r  = case r of
     APIResultOK ok ->
         div []
         [ text ok.search_id
+        , Button.button[ Button.outlineSecondary,Button.onClick (Getresults ok.search_id)] [ text "Show results" ] 
         ]
     APIError err ->
         div []
@@ -190,11 +184,50 @@ viewSearch s  = case s of
     SearchResultOK ok ->
         if ok.status == "Done" then
           div []
-          [ text ok.search_id
-          ]
+            [ text "success"
+            ]
+          {-div [id "member"]
+            [  Table.table
+                    { options = [ Table.striped, Table.hover ]
+                    , thead =  Table.simpleThead
+                        [ Table.th [] [ Html.text "100AA accession" ]
+                        , Table.th [] [ Html.text "Protein sequence" ]
+                        , Table.th [] [ Html.text "Habitat" ]
+                        , Table.th [] [ Html.text "Taxonomy" ]
+                        ]
+                    , tbody = Table.tbody []
+                            (List.map (\e ->
+                                case (e.aa, e.habitat) of 
+                                  (Just a, Just h) ->
+                                    case e.tax of 
+                                        Just t ->
+                                            Table.tr []
+                                            [  Table.td [] [ p [id "detail"] [text e.seqid] ]
+                                            ,  Table.td [] [ p [id "detail"] [text a ] ]
+                                            ,  Table.td [] [ p [id "detail"] [text h ] ]
+                                            ,  Table.td [] [ p [id "detail"] [text t ] ]
+                                            ]
+                                        Nothing ->
+                                            Table.tr []
+                                            [ Table.td [] [ p [id "detail"] [text e.seqid] ]
+                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                            ]
+                                  (_, _) ->
+                                    Table.tr []
+                                      [  Table.td [] [ p [id "detail"] [text e.seqid] ]
+                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
+                                      ]
+                                    ) <|ok.results)
+                    }
+                ]-}
         else
           div []
-          [ text ok.status
+          [ text ("The project is still "++ok.status++".Please try again.")
+          , Button.button[ Button.outlineSecondary,Button.onClick (Getresults ok.search_id)] [ text "Show results" ] 
           ]
     SearchResultError err ->
         div []
