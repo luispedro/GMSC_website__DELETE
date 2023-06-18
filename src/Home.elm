@@ -26,7 +26,7 @@ import Bootstrap.Card.Block as Block
 
 type OperationType = Contigs | Proteins
 
-type alias IdentifierQueryModel =
+type alias QueryModel =
     { optype : OperationType
     , idcontent : String
     , seqcontent: String
@@ -35,7 +35,7 @@ type alias IdentifierQueryModel =
 
 
 type Model =
-        IdentifierQuery IdentifierQueryModel
+        Query QueryModel
 
 type Msg
     = SelectOp OperationType
@@ -54,7 +54,7 @@ type Msg
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of
-        IdentifierQuery qm ->
+        Query qm ->
             Carousel.subscriptions qm.carouselState CarouselMsg
 
 myOptions =
@@ -65,7 +65,7 @@ myOptions =
 
 initialModel :  Model
 initialModel =
-    IdentifierQuery
+    Query
         { optype = Proteins
         , idcontent = ""
         , seqcontent = ""
@@ -79,10 +79,10 @@ update msg model =
     let
         ifQuery f =
           case model of
-            IdentifierQuery qm ->
+            Query qm ->
                 let
                     (qmpost, c) = f qm
-                in (IdentifierQuery qmpost, c)
+                in (Query qmpost, c)
     in case msg of
         SelectOp p ->
           ifQuery <| \qmodel ->
@@ -142,13 +142,13 @@ viewModel model =
 viewSearch : Model -> Html Msg
 viewSearch model =
   case model of
-    IdentifierQuery qm ->
+    Query qm ->
       search qm
 
 viewFig : Model -> Html Msg
 viewFig model =
   case model of
-    IdentifierQuery qm ->
+    Query qm ->
       fig qm
 
 -- main text
@@ -172,7 +172,7 @@ The smORFs were clustered at 90% amino acid identity resulting in 288 million 90
   - cellular localization prediction
 """ ]
 
-search : IdentifierQueryModel -> Html Msg
+search : QueryModel -> Html Msg
 search model =
   let
     buttonStyle who active =
@@ -246,7 +246,7 @@ search model =
             ]
         ]
 
-fig: IdentifierQueryModel -> Html Msg
+fig: QueryModel -> Html Msg
 fig model =
   div [class "fig"]
     [ Carousel.config CarouselMsg []
