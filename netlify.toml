@@ -1,6 +1,6 @@
 [build]
   publish = "dist/"
-  command = "cp src/style.css dist/ && cp -r src/assets dist/ && yarn elm make src/Main.elm --output=dist/index.html"
+  command = "yarn elm make src/Main.elm --output=dist/index.html && cp src/style.css dist/ && cp -r src/assets dist/"
 
 [build.environment]
   ELM_HOME = "$NETLIFY_BUILD_BASE/cache/elm"
