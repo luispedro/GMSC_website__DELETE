@@ -20,20 +20,6 @@ import Json.Decode as D
 
 import View exposing (View)
 
-type alias SequenceResult =
-    { aa: String
-    , habitat: String
-    , hits: List HitsResult
-    , quality: String
-    , tax: String
-    }
-
-type alias HitsResult = 
-    { e: Float
-    , id: String
-    , identity: Float
-    }
-
 type alias QueryResult =
   { seqid : String
   , aa : String
@@ -43,6 +29,20 @@ type alias QueryResult =
   , tax: String
   }
 
+type alias HitsResult = 
+    { e: Float
+    , id: String
+    , identity: Float
+    }
+
+type alias SequenceResult =
+    { aa: String
+    , habitat: String
+    , hits: List HitsResult
+    , quality: String
+    , tax: String
+    }
+
 type APIResult =
         APIResultOK { search_id : String
                     , status : String
@@ -50,7 +50,7 @@ type APIResult =
         | APIError String
 
 type SearchResult = 
-        SearchResultOK { results: Maybe (Dict.Dict String (Dict.Dict String QueryResult))
+        SearchResultOK { results : Maybe (Dict.Dict String (Dict.Dict String QueryResult))
                        , search_id : String
                        , status : String
                        }
@@ -65,6 +65,19 @@ decodeAPIResult =
         (D.field "search_id" D.string)
         (D.field "status" D.string)
 
+decodeSearchResult : D.Decoder SearchResult
+decodeSearchResult = 
+    let
+        bSearchResultOK r i s = SearchResultOK { results = r, search_id = i, status = s }
+    in D.map3 bSearchResultOK
+        (D.maybe (D.field "results" (D.dict decodeQueryResult)))
+        (D.field "search_id" D.string)
+        (D.field "status" D.string)
+
+decodeQueryResult : D.Decoder (Dict.Dict String QueryResult)
+decodeQueryResult =
+  D.map (Dict.map seqToquery) (D.dict decodeSequenceResult)
+
 seqToquery : String -> SequenceResult -> QueryResult
 seqToquery seqid { aa, habitat, hits, quality, tax } =
   QueryResult seqid aa habitat hits quality tax
@@ -77,19 +90,6 @@ decodeSequenceResult =
         (D.field "hits" (D.list decodeHitsResult))
         (D.field "quality" D.string)
         (D.field "taxonomy" D.string)
-
-decodeQueryResult : D.Decoder (Dict.Dict String QueryResult)
-decodeQueryResult =
-  D.map (Dict.map seqToquery) (D.dict decodeSequenceResult)
-
-decodeSearchResult : D.Decoder SearchResult
-decodeSearchResult = 
-    let
-        bSearchResultOK r i s = SearchResultOK { results = r, search_id = i, status = s }
-    in D.map3 bSearchResultOK
-        (D.maybe (D.field "results"  (D.dict decodeQueryResult)))
-        (D.field "search_id" D.string)
-        (D.field "status" D.string)
 
 decodeHitsResult : D.Decoder HitsResult
 decodeHitsResult = 
@@ -115,7 +115,7 @@ initialState : String -> (Model, Cmd Msg)
 initialState seq =
     ( Loading
     , Http.post
-    { url = "http://127.0.0.1:5000/internal/seq-search/"
+    { url = "https://gmsc-api.big-data-biology.org/internal/seq-search/"
     , body = Http.multipartBody
                 [ Http.stringPart "sequence_faa" seq
                 ]
@@ -147,7 +147,7 @@ update msg model =
 
         Getresults id ->
                 ( Loading
-                , Http.get { url = ("http://127.0.0.1:5000/internal/seq-search/" ++ id)
+                , Http.get { url = ("https://gmsc-api.big-data-biology.org/internal/seq-search/" ++ id)
                                    , expect = Http.expectJson SearchData decodeSearchResult
                            }
                 )
@@ -183,47 +183,29 @@ viewResults r  = case r of
 viewSearch s  = case s of
     SearchResultOK ok ->
         if ok.status == "Done" then
-          div []
-            [ text "success"
-            ]
-          {-div [id "member"]
-            [  Table.table
-                    { options = [ Table.striped, Table.hover ]
-                    , thead =  Table.simpleThead
-                        [ Table.th [] [ Html.text "100AA accession" ]
-                        , Table.th [] [ Html.text "Protein sequence" ]
-                        , Table.th [] [ Html.text "Habitat" ]
-                        , Table.th [] [ Html.text "Taxonomy" ]
-                        ]
-                    , tbody = Table.tbody []
-                            (List.map (\e ->
-                                case (e.aa, e.habitat) of 
-                                  (Just a, Just h) ->
-                                    case e.tax of 
-                                        Just t ->
-                                            Table.tr []
-                                            [  Table.td [] [ p [id "detail"] [text e.seqid] ]
-                                            ,  Table.td [] [ p [id "detail"] [text a ] ]
-                                            ,  Table.td [] [ p [id "detail"] [text h ] ]
-                                            ,  Table.td [] [ p [id "detail"] [text t ] ]
-                                            ]
-                                        Nothing ->
-                                            Table.tr []
-                                            [ Table.td [] [ p [id "detail"] [text e.seqid] ]
-                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
-                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
-                                            ,  Table.td [] [ p [id "detail"] [text "-"] ]
-                                            ]
-                                  (_, _) ->
+            case ok.results of 
+              Just r ->
+                div []
+                [Table.table
+                        { options = [ Table.striped, Table.hover ]
+                        , thead =  Table.simpleThead
+                            [ Table.th [] [ Html.text "100AA accession" ]
+                            , Table.th [] [ Html.text "Protein sequence" ]
+                            , Table.th [] [ Html.text "Habitat" ]
+                            , Table.th [] [ Html.text "Taxonomy" ]
+                            ]
+                        , tbody = Table.tbody []
+                        (List.map (\e -> 
                                     Table.tr []
-                                      [  Table.td [] [ p [id "detail"] [text e.seqid] ]
-                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
-                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
-                                      ,  Table.td [] [ p [id "detail"] [text "-"] ]
-                                      ]
-                                    ) <|ok.results)
-                    }
-                ]-}
+                                    [ Table.td [] [p[][text e]]
+                                    ]
+                                    )<|(Dict.keys r))
+                        }
+                ]
+              Nothing ->
+                div [] [text ok.search_id]
+             
+            
         else
           div []
           [ text ("The project is still "++ok.status++".Please try again.")
