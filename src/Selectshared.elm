@@ -10,6 +10,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Selects
 import Shared
+import Set
 
 type alias Model item =
     { id : String
@@ -82,10 +83,10 @@ view model prompt =
         currentSelection = 
             if (List.length (model.selected)) > 0 then
               p [id "selected"]
-                [ text ( "Selected: " ++ ( String.join ", " <| List.sort (List.map model.itemToLabel model.selected ))) 
+                [ text ( "Selected: " ++ ( String.join ", " <| List.sort ( Set.toList ( Set.fromList ( List.map model.itemToLabel model.selected ))))) 
                 ]
             else
-              p [][ text ""  ]
+              p [][ text ( String.join ", " <| List.sort (List.map model.itemToLabel model.selected ))  ]
 
         select =
             Selects.view

@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Browser
 import Dict
+import Set
 import Markdown
 import View exposing (View)
 
@@ -111,7 +112,7 @@ update msg model =
         Search ->
           case model of
             Select hm ->
-                let (qhabitat,qtaxonomy) = ( (String.join "," <| List.sort (List.map hm.habitatSearch.itemToLabel hm.habitatSearch.selected))
+                let (qhabitat,qtaxonomy) = ( (String.join "," <| List.sort (Set.toList ( Set.fromList ( List.map hm.habitatSearch.itemToLabel hm.habitatSearch.selected ))))
                                            , (String.join "," <| List.map hm.taxonomySearch.itemToLabel hm.taxonomySearch.selected))
                 in
                   let

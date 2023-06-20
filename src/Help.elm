@@ -42,14 +42,24 @@ A total of 4.5 billion smORFs were used to build the catalog. After 100%-identit
 - Annotate smORFs of microbial genomes or genes with the resource
 
 ## Searching
+
+### Search from identifier
+smORFs in the catalog are identified with the scheme `GMSC10.100AA.XXX_XXX_XXX` or `GMSC10.90AA.XXX_XXX_XXX`. The initial `GMSC10` indicates the version of the catalog (Global Microbial smORFs Catalog 1.0). The `100AA` or `90AA` indicates the amino acid identity of the catalog. The `XXX_XXX_XXX` is a unique numerical identifier (starting at zero). Numbers were assigned in order of increasing number of copies. So that the greater the number, the greater number of copies of that peptide were present in the raw data. 
+
+### Find homologues by sequence (GMSC-mapper)
+
 GMSC-mapper is provided as a search tool to query sequences. Users can provide a genome or gene sequence and it will return a set of smORFs with complete annotations that match the 90AA smORFs in GMSC.
 
 GMSC-mapper can also be downloaded and run locally, please see details in [Github page](https://github.com/BigDataBiology/GMSC-mapper)
 
 ![GMSC-mapper](assets/help_tool.png)
 
-## Identifiers
-smORFs in the catalog are identified with the scheme `GMSC10.100AA.XXX_XXX_XXX` or `GMSC10.90AA.XXX_XXX_XXX`. The initial `GMSC10` indicates the version of the catalog (Global Microbial smORFs Catalog 1.0). The `100AA` or `90AA` indicates the amino acid identity of the catalog. The `XXX_XXX_XXX` is a unique numerical identifier (starting at zero). Numbers were assigned in order of increasing number of copies. So that the greater the number, the greater number of copies of that peptide were present in the raw data. 
+## Browse
+Users can browse by habitats and taxonomy. Both habitat and taxonomy are substring matches (e.g., passing marine will match freshwater,marine,human gut). Multiple habitats can be selected.
+
+The results are 90AA smORFs families span in selected habitats and taxonomy.
+
+
 ## Data acquistion
 63,410 metagenomes published before January 1, 2020 were downloaded from the European Nucleotide Archive ([ENA](https://www.ebi.ac.uk/ena/browser/)). The criteria for selecting metagenomes are: 
 - the taxonomic ID of the sample is 408169, that is, the taxonomic ID for metagenome, or the taxonomic ID is the descendant of 408169 in the taxonomic tree
