@@ -12,7 +12,6 @@ div#topbar a {
     text-decoration: none;
     position:relative;
     width:50%;
-    left:100px;
   }
 div#topbar a:hover {
     background-color: #c4cdcf;

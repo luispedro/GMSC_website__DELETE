@@ -23,7 +23,7 @@ content =
 ## Overview
 The global microbial smORFs catalogue (GMSC) is an integrated, consistently-processed, smORFs catalogue of the microbial world, combining 63,410 publicly available metagenomes and 87,920 high-quality isolated microbial genomes from the [ProGenomes database](https://progenomes.embl.de/).
 
-A total of 4.5 billion smORFs were used to build the catalog. After 100%-identity redundancy removal, we obtained a 100AA non-redundant catalog with 965 million sequences. Further, the smORFs were clustered at 90% amino acid identity resulting in 288 million 90AA smORFs catalog.
+A total of 4.5 billion smORFs were used to build the catalogue. After 100%-identity redundancy removal, we obtained a 100AA non-redundant catalogue with 964,970,496 sequences. Further, the smORFs were clustered at 90% amino acid identity resulting in 287,926,875 90AA smORFs catalogue.
 
 ## Benefits and Features
 **Integration:**
@@ -43,10 +43,10 @@ A total of 4.5 billion smORFs were used to build the catalog. After 100%-identit
 
 ## Searching
 
-### Search from identifier
+##### Search from identifier
 smORFs in the catalog are identified with the scheme `GMSC10.100AA.XXX_XXX_XXX` or `GMSC10.90AA.XXX_XXX_XXX`. The initial `GMSC10` indicates the version of the catalog (Global Microbial smORFs Catalog 1.0). The `100AA` or `90AA` indicates the amino acid identity of the catalog. The `XXX_XXX_XXX` is a unique numerical identifier (starting at zero). Numbers were assigned in order of increasing number of copies. So that the greater the number, the greater number of copies of that peptide were present in the raw data. 
 
-### Find homologues by sequence (GMSC-mapper)
+##### Find homologues by sequence (GMSC-mapper)
 
 GMSC-mapper is provided as a search tool to query sequences. Users can provide a genome or gene sequence and it will return a set of smORFs with complete annotations that match the 90AA smORFs in GMSC.
 
@@ -68,7 +68,7 @@ The results are 90AA smORFs families span in selected habitats and taxonomy.
 87,920 high-quality microbial genomes were downloaded from the [ProGenomes v2 database](https://progenomes.embl.de/).
 
 ## Construction of GMSC
-![GMSC-mapper](assets/help_pipeline.png)
+![GMSC-mapper](assets/help_overview.png)
 ##### Assembly of contigs and prediction of smORFs
 - The reads &gt; 60 bps were processed after trimming positions with quality &lt; 25 using [NGLess](https://github.com/ngless-toolkit/ngless). Filtered reads were assembled into contigs using [Megahit](https://github.com/voutcn/megahit).
 - We used a modified version of [Prodigal](https://github.com/hyattpd/Prodigal) to predict ORFs &gt;= 15 bps.  The ORFs that &lt;= 300 bps were considered smORFs.
